@@ -63,9 +63,13 @@ public class ConsumptionChartReportService {
         for (Point point : points) {
             Map<String, Object> chartPoint = new LinkedHashMap<>();
             chartPoint.put("x", point.x.getTime());
-            chartPoint.put("y", point.y);
+            chartPoint.put("y", roundGb(point.y));
             chartPoints.add(chartPoint);
         }
         return chartPoints;
+    }
+
+    private float roundGb(float value) {
+        return Math.round(value * 100) / 100f;
     }
 }
