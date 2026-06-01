@@ -1,7 +1,5 @@
 package jmaster.etm.server.config;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jmaster.core.ui.annot.Ui;
 import lombok.Data;
 
@@ -9,18 +7,17 @@ import lombok.Data;
 @Ui(label = "Etm preferences", icon = "server")
 public class EtmPreferences {
 
-    @Min(1)
-    @Max(100)
-    @Ui(label = "Number of entries to show in recent session list")
-    private int clientSessionRecentCount = 10;
+    /**
+     * Snapshot retrieval enabled.
+     */
+    public boolean enabled = true;
 
-    @Min(1)
-    @Max(100)
-    @Ui(label = "Client session autoclose (minutes)")
-    private Integer clientSessionExpirationMinutes = 600;
+    /**
+     * Delegate uri for http execution.
+     */
+    public String delegateUri;
 
-    @Min(1)
-    @Max(3600)
-    @Ui(label = "Client session autoclose job interval (seconds)")
-    private Integer clientSessionExpirationJobIntervalSeconds = 60;
+    public String delegateBasicAuthUsername;
+
+    public String delegateBasicAuthPassword;
 }

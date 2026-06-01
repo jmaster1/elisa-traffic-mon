@@ -1,9 +1,9 @@
 package jmaster.etm.server.service;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import jmaster.etm.server.config.EtmPreferences;
 import jmaster.etm.server.model.ConsumptionSnapshot;
 import jmaster.etm.server.model.PhoneOwner;
 import jmaster.etm.server.repository.ConsumptionSnapshotRepository;
@@ -98,7 +98,9 @@ public class ConsumptionRegisterService {
 	public void queryConsumptionSnapshots() {
 		try {
 			FetchConfig fetchData = prefsService.getPrefs(FetchConfig.class);
-			if (fetchData != null && fetchData.uri != null && fetchData.enabled) {
+			EtmPreferences etmPreferences = prefsService.getPrefs(EtmPreferences.class);
+			if (fetchData != null && fetchData.uri != null
+					&& etmPreferences != null && etmPreferences.enabled) {
 				for (PhoneOwner phoneOwner : PhoneOwner.values()) {
 					BigDecimal usedGb = queryConsumptionSnapshot(phoneOwner, fetchData);
 					ConsumptionSnapshot snapshot = new ConsumptionSnapshot();
@@ -123,11 +125,12 @@ public class ConsumptionRegisterService {
 	 */
 	private BigDecimal queryConsumptionSnapshot(PhoneOwner phoneOwner, FetchConfig fetchData)
 	{
+		EtmPreferences etmPreferences = prefsService.getPrefs(EtmPreferences.class);
 		Function<HttpRequestData, HttpResponseData> httpQueryExecutor =
-				StringUtils.isEmpty(fetchData.delegateUri) ?
+				etmPreferences == null || StringUtils.isEmpty(etmPreferences.delegateUri) ?
 				new LocalHttpExecutor() :
-				new DelegateHttpExecutor(fetchData.delegateUri,
-						fetchData.delegateBasicAuthUsername, fetchData.delegateBasicAuthPassword);
+				new DelegateHttpExecutor(etmPreferences.delegateUri,
+						etmPreferences.delegateBasicAuthUsername, etmPreferences.delegateBasicAuthPassword);
 
 		HttpRequestData request = new HttpRequestData();
 		request.url = fetchData.uri.replaceAll(
