@@ -6,8 +6,7 @@
 <div class="offcanvas-lg offcanvas-end flex-grow-1" tabindex="-1" id="geoMainMenu" aria-labelledby="geoMainMenuLabel">
     <div class="offcanvas-header border-bottom">
         <div class="offcanvas-title geo-brand" id="geoMainMenuLabel">
-            <span class="geo-brand-mark">G</span>
-            <span>geolog</span>
+            <span>etm</span>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#geoMainMenu"
                 aria-label="Close"></button>
@@ -17,38 +16,18 @@
         <ul class="navbar-nav geo-nav me-lg-auto">
             <#if admin>
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/user/list">
-                        <@icon name="people"/>Users</a>
+                    <a class="nav-link" href="/consumption/report">
+                        <@icon name="graph-up"/>Consumption report</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/device/list">
-                        <@icon name=GeoIcon.DEVICE/>Devices</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/worksite/list">
-                        <@icon name=GeoIcon.WORKSITE/>Worksite</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/userworksite/list">
-                        <@icon name=GeoIcon.USER_WORKSITE/>User worksites</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/clientsession/list">
-                        <@icon name=GeoIcon.CLIENT_SESSION/>Client sessions</a>
+                    <a class="nav-link" href="/consumption/config">
+                        <@icon name="sliders"/>Consumption config</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <@icon name="gear"/>Admin
                     </a>
                     <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="/apk">
-                                <@icon name="android2"/>Download APK</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/admin/docs/spec">
-                                <@icon name="file-text"/>Specification</a>
-                        </li>
                         <li>
                             <a class="dropdown-item" href="/admin/httpsession/list">
                                 <@icon name="clock-history"/>HTTP Sessions</a>
