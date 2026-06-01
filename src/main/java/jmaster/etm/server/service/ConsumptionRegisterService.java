@@ -94,7 +94,7 @@ public class ConsumptionRegisterService {
 		return fetchConfig;
 	}
 	
-	@Scheduled(initialDelay = 1000, fixedDelay = 600000)
+	@Scheduled(cron = "0 */10 * * * *")
 	public void queryConsumptionSnapshots() {
 		try {
 			FetchConfig fetchData = prefsService.getPrefs(FetchConfig.class);
