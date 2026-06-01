@@ -27,7 +27,6 @@ public class AppConfig {
     public void init() {
         AdminPrefsController.KNOWN_PREFS_TYPES = new Class[]{
                 GeoPreferences.class,
-                GeoClientPreferences.class,
                 SystemPrefs.class,
         };
     }
