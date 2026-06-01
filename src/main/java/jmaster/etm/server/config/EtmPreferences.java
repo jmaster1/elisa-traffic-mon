@@ -6,8 +6,8 @@ import jmaster.core.ui.annot.Ui;
 import lombok.Data;
 
 @Data
-@Ui(label = "Geolog preferences", icon = "server")
-public class GeoPreferences {
+@Ui(label = "Etm preferences", icon = "server")
+public class EtmPreferences {
 
     @Min(1)
     @Max(100)

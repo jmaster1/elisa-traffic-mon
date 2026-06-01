@@ -1,4 +1,4 @@
-<title>geolog<#if Jmaster.isLocalRequest()>*</#if></title>
+<title>etm<#if Jmaster.isLocalRequest()>*</#if></title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
@@ -17,6 +17,6 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <@includeCss "/static/css/jmaster.css"/>
-<@includeCss "/static/css/geolog.css"/>
+<@includeCss "/static/css/etm.css"/>
 <@includeJsJmaster/>
 

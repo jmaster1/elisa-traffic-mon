@@ -26,7 +26,7 @@ public class AppConfig {
     @PostConstruct
     public void init() {
         AdminPrefsController.KNOWN_PREFS_TYPES = new Class[]{
-                GeoPreferences.class,
+                EtmPreferences.class,
                 SystemPrefs.class,
         };
     }

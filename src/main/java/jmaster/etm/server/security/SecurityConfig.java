@@ -126,8 +126,8 @@ public class SecurityConfig {
     @Bean
     UserDetailsService userDetailsService(
             PasswordEncoder passwordEncoder,
-            @Value("${geolog.security.username:geolog}") String username,
-            @Value("${geolog.security.password:geolog}") String password
+            @Value("${etm.security.username:etm}") String username,
+            @Value("${etm.security.password:etm}") String password
     ) {
         return new InMemoryUserDetailsManager(
                 User.withUsername(username)
