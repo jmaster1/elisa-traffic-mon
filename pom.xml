@@ -12,7 +12,7 @@
 
 	<groupId>jmaster.elisa-traffic-mon</groupId>
 	<artifactId>server</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<name>elisa-traffic-mon.server</name>
 
 	<properties>
