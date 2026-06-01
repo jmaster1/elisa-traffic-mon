@@ -130,7 +130,10 @@ public class ConsumptionRegisterService {
 						fetchData.delegateBasicAuthUsername, fetchData.delegateBasicAuthPassword);
 
 		HttpRequestData request = new HttpRequestData();
-		request.url = fetchData.uri + phoneOwner.phoneNr;
+		request.url = fetchData.uri.replaceAll(
+				"(getMobileUsageData/)(\\d+)",
+				"$1" + phoneOwner.phoneNr
+		);
 		if(fetchData.headers != null) {
 			request.headers.putAll(fetchData.headers);
 		}
@@ -139,12 +142,14 @@ public class ConsumptionRegisterService {
 		
 		response.ensureStatusOk();
 		JsonObject obj = response.getContentAsJsonObject();
-		JsonArray consumptionGraphs = obj.get("consumptionGraphs").getAsJsonArray();
-		JsonObject consumptionGraph = consumptionGraphs.get(0).getAsJsonObject();
-		JsonArray consumptionBars = consumptionGraph.get("consumptionBars").getAsJsonArray();
-		JsonObject consumptionBar = consumptionBars.get(0).getAsJsonObject();
-		BigDecimal used = consumptionBar.get("used").getAsBigDecimal();
-		String usedUnit = consumptionBar.get("usedUnit").getAsString();
+		JsonObject graph = obj
+				.getAsJsonArray("internetConsumptionGraphs")
+				.get(0)
+				.getAsJsonObject();
+
+		BigDecimal used = graph.get("used").getAsBigDecimal();
+		String usedUnit = graph.get("usedUnit").getAsString();
+
 		if("KB".equals(usedUnit)) {
 			used = used.divide(BigDecimal.valueOf(1024 * 1024));
 		} else if("MB".equals(usedUnit)) {
