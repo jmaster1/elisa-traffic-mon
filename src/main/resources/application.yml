@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: server
+  web:
+    resources:
+      add-mappings: false
+  datasource:
+    url: ${DATABASE_URL:jdbc:mariadb://localhost:3306/etm}
+    username: ${DATABASE_USERNAME:etm}
+    password: ${DATABASE_PASSWORD:etm}
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/spring-session-mariadb.sql
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.internal.JCacheRegionFactory
+        javax:
+          cache:
+            uri: ehcache.xml
+            provider: org.ehcache.jsr107.EhcacheCachingProvider
+  freemarker:
+    settings:
+      auto_include: _/layout.ftlh
+      number_format: computer
+    expose-session-attributes: true
+    expose-request-attributes: true
+    request-context-attribute: request
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: never
+      table-name: SPRING_SESSION
+
+server:
+  port: ${SERVER_PORT:8181}
+  servlet:
+    session:
+      timeout: 1d
+
+etm:
+  security:
+    username: ${GEOLOG_SECURITY_USERNAME:etm}
+    password: ${GEOLOG_SECURITY_PASSWORD:etm}

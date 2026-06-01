@@ -1,0 +1,97 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="pinGradient" x1="512" y1="92" x2="512" y2="918" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFD55A"/>
+            <stop offset="0.32" stop-color="#FFAA19"/>
+            <stop offset="0.68" stop-color="#FF7A00"/>
+            <stop offset="1" stop-color="#F04D00"/>
+        </linearGradient>
+
+        <linearGradient id="pinEdge" x1="320" y1="150" x2="690" y2="890" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFE27A"/>
+            <stop offset="0.45" stop-color="#FF8A00"/>
+            <stop offset="1" stop-color="#C93A00"/>
+        </linearGradient>
+
+        <radialGradient id="pinGloss" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(430 205) rotate(67) scale(330 180)">
+            <stop offset="0" stop-color="white" stop-opacity="0.48"/>
+            <stop offset="0.45" stop-color="white" stop-opacity="0.14"/>
+            <stop offset="1" stop-color="white" stop-opacity="0"/>
+        </radialGradient>
+
+        <radialGradient id="clockGradient" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(430 250) rotate(52) scale(430)">
+            <stop offset="0" stop-color="#3F5668"/>
+            <stop offset="0.48" stop-color="#253746"/>
+            <stop offset="1" stop-color="#101923"/>
+        </radialGradient>
+
+        <linearGradient id="clockRim" x1="512" y1="112" x2="512" y2="626" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFE17A"/>
+            <stop offset="0.55" stop-color="#FF9A05"/>
+            <stop offset="1" stop-color="#D94D00"/>
+        </linearGradient>
+
+        <linearGradient id="handGradient" x1="410" y1="275" x2="650" y2="400" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFFFFF"/>
+            <stop offset="0.55" stop-color="#F4F4F1"/>
+            <stop offset="1" stop-color="#D6D8DA"/>
+        </linearGradient>
+
+        <filter id="outerShadow" x="120" y="40" width="780" height="940" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feDropShadow dx="0" dy="18" stdDeviation="28" flood-color="#000000" flood-opacity="0.34"/>
+        </filter>
+
+        <filter id="innerSoft" x="230" y="88" width="564" height="564" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.34"/>
+        </filter>
+
+        <filter id="smallShadow" x="250" y="120" width="520" height="520" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000000" flood-opacity="0.35"/>
+        </filter>
+    </defs>
+
+    <g filter="url(#outerShadow)">
+        <!-- объемный край -->
+        <path d="M512 84C342 84 216 219 216 390C216 565 383 726 512 920C641 726 808 565 808 390C808 219 682 84 512 84Z" fill="url(#pinEdge)"/>
+
+        <!-- основная форма указателя -->
+        <path d="M512 104C354 104 238 230 238 390C238 552 397 704 512 884C627 704 786 552 786 390C786 230 670 104 512 104Z" fill="url(#pinGradient)"/>
+
+        <!-- нижнее затемнение для объема -->
+        <path d="M512 884C604 740 725 610 770 472C742 652 617 764 512 884Z" fill="#C83D00" opacity="0.20"/>
+
+        <!-- мягкий верхний блик на пине -->
+        <path d="M284 394C284 252 384 144 516 144C635 144 724 231 742 353C708 247 624 180 512 180C391 180 307 270 284 394Z" fill="url(#pinGloss)"/>
+
+        <!-- тонкий левый световой кант -->
+        <path d="M260 390C260 251 363 126 512 126" stroke="#FFE37C" stroke-width="10" stroke-linecap="round" opacity="0.42"/>
+
+        <!-- часы: оранжевый объемный обод -->
+        <circle cx="512" cy="368" r="260" fill="url(#clockRim)" filter="url(#innerSoft)"/>
+        <circle cx="512" cy="368" r="218" fill="url(#clockGradient)"/>
+
+        <!-- внутренний блик на стекле часов -->
+        <ellipse cx="430" cy="260" rx="138" ry="74" fill="white" opacity="0.09" transform="rotate(-18 430 260)"/>
+        <path d="M326 361C339 258 414 190 516 190C599 190 666 235 698 304" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.09"/>
+
+        <!-- часовые метки -->
+        <g stroke="white" stroke-width="18" stroke-linecap="round" filter="url(#smallShadow)">
+            <line x1="512" y1="174" x2="512" y2="220"/>
+            <line x1="512" y1="516" x2="512" y2="562"/>
+            <line x1="318" y1="368" x2="364" y2="368"/>
+            <line x1="660" y1="368" x2="706" y2="368"/>
+            <line x1="384" y1="240" x2="412" y2="276"/>
+            <line x1="612" y1="460" x2="642" y2="496"/>
+            <line x1="640" y1="240" x2="612" y2="276"/>
+            <line x1="412" y1="460" x2="384" y2="496"/>
+        </g>
+
+        <!-- стрелки с тенью и градиентом -->
+        <g filter="url(#smallShadow)">
+            <line x1="512" y1="368" x2="658" y2="276" stroke="url(#handGradient)" stroke-width="30" stroke-linecap="round"/>
+            <line x1="512" y1="368" x2="402" y2="300" stroke="url(#handGradient)" stroke-width="34" stroke-linecap="round"/>
+            <circle cx="512" cy="368" r="38" fill="url(#handGradient)"/>
+            <circle cx="500" cy="354" r="14" fill="white" opacity="0.5"/>
+        </g>
+    </g>
+</svg>
