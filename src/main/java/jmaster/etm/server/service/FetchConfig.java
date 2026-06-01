@@ -11,6 +11,7 @@ import java.util.Map;
 @Data
 @Ui(label = "Etm preferences", icon = "server")
 public class FetchConfig {
+
 	/**
 	 * snapshot retrieval enabled
 	 */

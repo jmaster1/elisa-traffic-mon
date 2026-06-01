@@ -35,49 +35,19 @@ public class ConsumptionController extends AbstractController {
 	@Autowired
 	PrefsService prefsService;
 	
-	/**
-	 * https://github.com/turkraft/springfilter
-	 * https://github.com/sisimomo/Spring-Filter-Query-Builder
-	 * @param filter
-	 * @return
-	 */
-//	@GetMapping("/consumption/data")
-//	Collection<ConsumptionDataset> find(@Parameter(hidden = true)
-//	FilterSpecification<ConsumptionSnapshot> filter) {
-//		return consumptionReportService.getConsumptionDatasets(filter);
-//	}
-	
-	@GetMapping("/consumption/fetchConfig")
+	@GetMapping("/consumption/config")
 	String fetchConfig(Model model) {
 		FetchConfig fetchConfig = prefsService.getPrefs(FetchConfig.class);
 		model.addAttribute("fetchConfig", toJson(fetchConfig));
+		LastError lastError = consumptionRegisterService.getLastError();
+		model.addAttribute("lastError", lastError);
 		return "consumption/fetchConfig";
 	}
 
-	@PostMapping("/consumption/fetchConfig")
+	@PostMapping("/consumption/config")
 	String parseFetch(@RequestParam("data") String data) {
 		FetchConfig fetchConfig = consumptionRegisterService.parseFetch(data);
 		consumptionRegisterService.saveFetchConfig(fetchConfig);
 		return redirect("/consumption/fetchConfig");
-	}
-
-	@PutMapping("/consumption/fetchConfig")
-	FetchConfig saveFetchConfig(@RequestBody FetchConfig fetchConfig) {
-		return consumptionRegisterService.saveFetchConfig(fetchConfig);
-	}
-	
-	@GetMapping("/consumption/lastError")
-    LastError getLastError() {
-		return consumptionRegisterService.getLastError();
-	}
-	
-	@DeleteMapping("/consumption/lastError")
-	void clearLastError() {
-		consumptionRegisterService.clearLastError();
-	}
-	
-	@PostMapping("/consumption/fetch")
-	void queryConsumptionSnapshots() {
-		consumptionRegisterService.queryConsumptionSnapshots();
 	}
 }
