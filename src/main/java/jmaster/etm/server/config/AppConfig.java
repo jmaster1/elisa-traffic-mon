@@ -2,6 +2,7 @@ package jmaster.etm.server.config;
 
 import jakarta.annotation.PostConstruct;
 import jmaster.core.i18n.BasicMessageSource;
+import jmaster.etm.server.service.FetchConfig;
 import jmaster.system.SystemPrefs;
 import jmaster.system.prefs.AdminPrefsController;
 import org.springframework.beans.factory.ObjectProvider;
@@ -27,6 +28,7 @@ public class AppConfig {
     public void init() {
         AdminPrefsController.KNOWN_PREFS_TYPES = new Class[]{
                 EtmPreferences.class,
+                FetchConfig.class,
                 SystemPrefs.class,
         };
     }

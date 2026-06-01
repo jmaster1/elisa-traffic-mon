@@ -31,8 +31,7 @@ import java.util.function.Function;
  * reads consumption snapshots from web and writes them into db
  */
 @Service
-public class ConsumptionRegisterService
-{
+public class ConsumptionRegisterService {
 
 	Logger logger = LoggerFactory.getLogger(ConsumptionRegisterService.class);
 
