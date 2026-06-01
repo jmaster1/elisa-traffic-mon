@@ -41,6 +41,7 @@ public class ConsumptionReportService
 			ConsumptionDataset dataset = phoneToDataset.get(phoneNr);
 			if(dataset == null) {
 				phoneToDataset.put(phoneNr, dataset = new ConsumptionDataset());
+				dataset.phoneNr = phoneNr;
 				PhoneOwner owner = PhoneOwner.fromPhone(phoneNr);
 				dataset.label = owner != null ? owner.name() : phoneNr.toString();
 			}

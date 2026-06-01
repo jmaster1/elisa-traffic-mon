@@ -20,6 +20,11 @@ public class HomeController {
         return "welcome";
     }
 
+    @GetMapping("/favicon.ico")
+    public String favicon() {
+        return "redirect:/static/favicon.svg";
+    }
+
     private boolean hasRole(Authentication authentication, UserRole role) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
