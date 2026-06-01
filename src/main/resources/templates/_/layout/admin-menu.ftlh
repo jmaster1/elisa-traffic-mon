@@ -17,11 +17,11 @@
             <#if admin>
                 <li class="nav-item">
                     <a class="nav-link" href="/consumption/report">
-                        <@icon name="graph-up"/>Consumption report</a>
+                        <@icon name="graph-up"/>Report</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/consumption/config">
-                        <@icon name="sliders"/>Consumption config</a>
+                        <@icon name="sliders"/>Config</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
