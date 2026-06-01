@@ -1,4 +1,4 @@
-package com.geolog.server.security;
+package jmaster.etm.server.security;
 
 import org.springframework.util.StringUtils;
 

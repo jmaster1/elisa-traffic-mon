@@ -1,4 +1,4 @@
-package com.geolog.server.controller.admin;
+package jmaster.etm.server.controller.admin;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jmaster.core.controller.AbstractController;

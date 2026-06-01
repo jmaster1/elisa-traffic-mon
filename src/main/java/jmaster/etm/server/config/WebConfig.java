@@ -1,4 +1,4 @@
-package com.geolog.server.config;
+package jmaster.etm.server.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

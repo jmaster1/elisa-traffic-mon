@@ -1,4 +1,4 @@
-package com.geolog.server.controller.system;
+package jmaster.etm.server.controller.system;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

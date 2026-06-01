@@ -1,4 +1,4 @@
-package com.geolog.server.controller;
+package jmaster.etm.server.controller;
 
 public final class Mapping {
 

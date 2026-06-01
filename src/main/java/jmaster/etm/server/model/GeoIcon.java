@@ -1,4 +1,4 @@
-package com.geolog.server.model;
+package jmaster.etm.server.model;
 
 public interface GeoIcon {
     String DEVICE = "phone";

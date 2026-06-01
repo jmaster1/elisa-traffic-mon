@@ -1,6 +1,6 @@
-package com.geolog.server.config;
+package jmaster.etm.server.config;
 
-import com.geolog.server.model.GeoIcon;
+import jmaster.etm.server.model.GeoIcon;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateHashModel;

@@ -1,4 +1,4 @@
-package com.geolog.server.controller.system;
+package jmaster.etm.server.controller.system;
 
 import jmaster.system.user.UserRole;
 import org.springframework.security.core.Authentication;

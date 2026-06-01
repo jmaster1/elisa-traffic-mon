@@ -1,4 +1,4 @@
-package com.geolog.server.config;
+package jmaster.etm.server.config;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

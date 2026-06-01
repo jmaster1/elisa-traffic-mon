@@ -1,4 +1,4 @@
-package com.geolog.server.config;
+package jmaster.etm.server.config;
 
 import jakarta.annotation.PostConstruct;
 import jmaster.core.i18n.BasicMessageSource;

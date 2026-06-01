@@ -1,4 +1,4 @@
-package com.geolog.server.controller.admin;
+package jmaster.etm.server.controller.admin;
 
 import jmaster.system.user.UserRepository;
 import lombok.RequiredArgsConstructor;
