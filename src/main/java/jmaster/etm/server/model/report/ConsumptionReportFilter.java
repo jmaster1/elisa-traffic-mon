@@ -1,4 +1,4 @@
-package jmaster.etm.server.model;
+package jmaster.etm.server.model.report;
 
 import jmaster.core.model.LocalDateTimeRange;
 import jmaster.core.model.filter.DefaultFilter;
@@ -8,6 +8,8 @@ import jmaster.core.ui.annot.Ui;
 import jmaster.core.ui.annot.UiInputAttr;
 import jmaster.core.util.LangHelper;
 import jmaster.core.util.jpa.SpecBuilder;
+import jmaster.etm.server.model.PhoneOwner;
+import jmaster.etm.server.model.snapshot.ConsumptionSnapshot;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

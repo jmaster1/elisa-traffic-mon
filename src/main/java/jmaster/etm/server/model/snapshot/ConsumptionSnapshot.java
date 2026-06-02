@@ -1,4 +1,4 @@
-package jmaster.etm.server.model;
+package jmaster.etm.server.model.snapshot;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

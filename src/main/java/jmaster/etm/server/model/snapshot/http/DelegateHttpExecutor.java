@@ -1,4 +1,4 @@
-package jmaster.etm.server.service.http;
+package jmaster.etm.server.model.snapshot.http;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

@@ -1,11 +1,8 @@
-package jmaster.etm.server.service;
+package jmaster.etm.server.model.report;
 
-import jmaster.etm.server.model.ConsumptionDataset;
-import jmaster.etm.server.model.ConsumptionReportFilter;
-import jmaster.etm.server.model.ConsumptionSnapshot;
+import jmaster.etm.server.model.snapshot.ConsumptionSnapshot;
 import jmaster.etm.server.model.PhoneOwner;
-import jmaster.etm.server.model.Point;
-import jmaster.etm.server.repository.ConsumptionSnapshotRepository;
+import jmaster.etm.server.model.snapshot.ConsumptionSnapshotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -1,8 +1,5 @@
-package jmaster.etm.server.service;
+package jmaster.etm.server.model.report;
 
-import jmaster.etm.server.model.ConsumptionDataset;
-import jmaster.etm.server.model.ConsumptionReportFilter;
-import jmaster.etm.server.model.Point;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import software.xdev.chartjs.model.charts.ScatterChart;

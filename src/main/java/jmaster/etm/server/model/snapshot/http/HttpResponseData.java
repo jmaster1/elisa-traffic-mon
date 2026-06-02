@@ -1,4 +1,4 @@
-package jmaster.etm.server.service.http;
+package jmaster.etm.server.model.snapshot.http;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

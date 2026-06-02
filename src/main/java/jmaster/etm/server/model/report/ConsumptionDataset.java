@@ -1,4 +1,6 @@
-package jmaster.etm.server.model;
+package jmaster.etm.server.model.report;
+
+import jmaster.etm.server.model.snapshot.ConsumptionSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package jmaster.etm.server.service;
+package jmaster.etm.server.model.snapshot;
 
 import java.util.Date;
 

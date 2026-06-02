@@ -2,7 +2,7 @@ package jmaster.etm.server.config;
 
 import jakarta.annotation.PostConstruct;
 import jmaster.core.i18n.BasicMessageSource;
-import jmaster.etm.server.service.FetchConfig;
+import jmaster.etm.server.model.snapshot.FetchConfig;
 import jmaster.system.SystemPrefs;
 import jmaster.system.prefs.AdminPrefsController;
 import org.springframework.beans.factory.ObjectProvider;

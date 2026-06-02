@@ -1,6 +1,5 @@
-package jmaster.etm.server.repository;
+package jmaster.etm.server.model.snapshot;
 
-import jmaster.etm.server.model.ConsumptionSnapshot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
