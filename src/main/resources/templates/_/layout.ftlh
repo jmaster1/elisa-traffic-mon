@@ -22,7 +22,7 @@
         <#include "/_/layout/head.ftlh">
     </head>
     <body>
-        <div id="geoServerVersion" class="geo-version-badge geo-version-server">${TemplateUtil.getBuildVersion()}</div>
+        <@serverVersion/>
         <header class="geo-header">
             <nav class="navbar navbar-expand-lg bg-body border-bottom">
                 <div class="container-fluid geo-shell">
