@@ -23,9 +23,4 @@ public class ConsumptionReportController extends AbstractController {
         createFilterFormState(filter, model, "reportFilter").setMethod("get");
         return "consumption/report";
     }
-
-    @GetMapping("json")
-    ResponseEntity<?> json(ConsumptionReportFilter filter) {
-        return doWithJsonResponse(() -> toJson(consumptionChartReportService.buildChart(filter)));
-    }
 }
