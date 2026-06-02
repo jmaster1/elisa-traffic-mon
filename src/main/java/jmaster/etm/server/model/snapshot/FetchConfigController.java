@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +31,19 @@ public class FetchConfigController extends AbstractController {
 	String parseFetch(@RequestParam("data") String data) {
 		FetchConfig fetchConfig = consumptionRegisterService.parseFetchConfig(data);
 		consumptionRegisterService.saveFetchConfig(fetchConfig);
-		return redirect("/consumption/fetchConfig");
+		return redirect("/consumption/config");
+	}
+
+	@PostMapping("/consumption/config/test")
+	String testFetch(RedirectAttributes redirectAttributes) {
+		consumptionRegisterService.clearLastError();
+		consumptionRegisterService.queryConsumptionSnapshots();
+		LastError lastError = consumptionRegisterService.getLastError();
+		if (lastError == null) {
+			redirectAttributes.addFlashAttribute(ATTR_INFO_MESSAGE, "Consumption snapshot query completed.");
+		} else {
+			redirectAttributes.addFlashAttribute(ATTR_ERROR_MESSAGE, lastError.message);
+		}
+		return redirect("/consumption/config");
 	}
 }

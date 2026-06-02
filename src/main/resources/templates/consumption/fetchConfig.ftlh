@@ -25,17 +25,27 @@
   "method": "GET"
 });</code></pre>
         </div>
-        <form method="post" class="d-grid gap-3">
+        <form id="parseFetchConfigForm" method="post" class="d-grid gap-3">
             <textarea
                     name="data"
                     class="form-control font-monospace"
                     rows="10"
                     required
                     autofocus></textarea>
-            <div>
-                <button class="btn btn-primary" type="submit">Parse</button>
-            </div>
         </form>
+        <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-primary" form="parseFetchConfigForm" type="submit">Parse</button>
+            <form method="post" action="/consumption/config/test">
+                <button class="btn btn-outline-primary" type="submit">test</button>
+            </form>
+        </div>
+        <#if lastError??>
+            <div class="alert alert-danger mt-3" role="alert">
+                <div class="fw-semibold">Last consumption query error</div>
+                <div>${lastError.date?datetime}</div>
+                <div>${lastError.message}</div>
+            </div>
+        </#if>
         <pre id="fetchConfig" class=""></pre>
         <script>
             const config = ${fetchConfig?no_esc};
