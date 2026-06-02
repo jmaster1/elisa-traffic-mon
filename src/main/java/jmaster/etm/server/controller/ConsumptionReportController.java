@@ -18,11 +18,9 @@ public class ConsumptionReportController extends AbstractController {
     private final ConsumptionChartReportService consumptionChartReportService;
 
     @GetMapping({"", "/"})
-    String chart(
-            ConsumptionReportFilter filter,
-            Model model) {
+    String chart(ConsumptionReportFilter filter, Model model) {
         model.addAttribute("chartJson", toJson(consumptionChartReportService.buildChart(filter)));
-        createFormState(filter, model, "reportFilter").setMethod("get");
+        createFilterFormState(filter, model, "reportFilter").setMethod("get");
         return "consumption/report";
     }
 
