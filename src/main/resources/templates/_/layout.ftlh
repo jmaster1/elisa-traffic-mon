@@ -39,7 +39,7 @@
 
         <main class="geo-main">
             <div class="container-fluid geo-shell">
-                <#include "/_/layout/messages.ftlh">
+                <@messages/>
                 <#nested>
             </div>
         </main>
