@@ -7,6 +7,8 @@
             <div class="text-secondary">Used GB by phone number</div>
         </div>
 
+        <@pageFilter formState=reportFilter />
+
         <div style="width: 100%; height: 620px">
             <canvas id="consumptionChart"></canvas>
         </div>

@@ -1,8 +1,7 @@
 package jmaster.etm.server.controller;
 
-import com.turkraft.springfilter.converter.FilterSpecification;
 import jmaster.core.controller.AbstractController;
-import jmaster.etm.server.model.ConsumptionSnapshot;
+import jmaster.etm.server.model.ConsumptionReportFilter;
 import jmaster.etm.server.service.ConsumptionChartReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +19,15 @@ public class ConsumptionReportController extends AbstractController {
 
     @GetMapping({"", "/"})
     String chart(
-            FilterSpecification<ConsumptionSnapshot> filter,
+            ConsumptionReportFilter filter,
             Model model) {
         model.addAttribute("chartJson", toJson(consumptionChartReportService.buildChart(filter)));
+        createFormState(filter, model, "reportFilter").setMethod("get");
         return "consumption/report";
     }
 
     @GetMapping("json")
-    ResponseEntity<?> json(FilterSpecification<ConsumptionSnapshot> filter) {
+    ResponseEntity<?> json(ConsumptionReportFilter filter) {
         return doWithJsonResponse(() -> toJson(consumptionChartReportService.buildChart(filter)));
     }
 }

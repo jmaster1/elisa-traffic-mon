@@ -1,8 +1,7 @@
 package jmaster.etm.server.service;
 
-import com.turkraft.springfilter.converter.FilterSpecification;
 import jmaster.etm.server.model.ConsumptionDataset;
-import jmaster.etm.server.model.ConsumptionSnapshot;
+import jmaster.etm.server.model.ConsumptionReportFilter;
 import jmaster.etm.server.model.Point;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class ConsumptionChartReportService {
 
     private final ConsumptionReportService consumptionReportService;
 
-    public Map<String, Object> buildChart(FilterSpecification<ConsumptionSnapshot> filter) {
+    public Map<String, Object> buildChart(ConsumptionReportFilter filter) {
         Collection<ConsumptionDataset> consumptionDatasets = consumptionReportService.getConsumptionDatasets(filter);
 
         List<Map<String, Object>> datasets = new ArrayList<>();

@@ -1,7 +1,7 @@
 package jmaster.etm.server.service;
 
-import com.turkraft.springfilter.converter.FilterSpecification;
 import jmaster.etm.server.model.ConsumptionDataset;
+import jmaster.etm.server.model.ConsumptionReportFilter;
 import jmaster.etm.server.model.ConsumptionSnapshot;
 import jmaster.etm.server.model.PhoneOwner;
 import jmaster.etm.server.model.Point;
@@ -24,16 +24,16 @@ public class ConsumptionReportService
 	@Autowired
     ConsumptionSnapshotRepository repository;
 	
-	public List<ConsumptionSnapshot> list(FilterSpecification<ConsumptionSnapshot> filter)
+	public List<ConsumptionSnapshot> list(ConsumptionReportFilter filter)
 	{
-		PageRequest pageRequest = PageRequest.of(0, 10000,
+		PageRequest pageRequest = PageRequest.of(0, filter.resolveMaxPoints(),
 				Sort.by(Sort.Order.asc(ConsumptionSnapshot.Fields.timestamp)));
-		Page<ConsumptionSnapshot> page = repository.findAll(filter, pageRequest);
+		Page<ConsumptionSnapshot> page = repository.findAll(filter.createSpecification(), pageRequest);
 		List<ConsumptionSnapshot> content = page.getContent();
 		return content;
 	}
 	
-	public Collection<ConsumptionDataset> getConsumptionDatasets(FilterSpecification<ConsumptionSnapshot> filter) {
+	public Collection<ConsumptionDataset> getConsumptionDatasets(ConsumptionReportFilter filter) {
 		Map<Long, ConsumptionDataset> phoneToDataset = new HashMap<>();
 		List<ConsumptionSnapshot> snapshots = list(filter);
 		for(ConsumptionSnapshot snapshot : snapshots) {
