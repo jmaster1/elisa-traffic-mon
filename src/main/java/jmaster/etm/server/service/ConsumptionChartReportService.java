@@ -5,12 +5,13 @@ import jmaster.etm.server.model.ConsumptionReportFilter;
 import jmaster.etm.server.model.Point;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import software.xdev.chartjs.model.charts.ScatterChart;
+import software.xdev.chartjs.model.data.ScatterData;
+import software.xdev.chartjs.model.datapoint.ScatterDataPoint;
+import software.xdev.chartjs.model.dataset.ScatterDataset;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,43 +30,36 @@ public class ConsumptionChartReportService {
 
     private final ConsumptionReportService consumptionReportService;
 
-    public Map<String, Object> buildChart(ConsumptionReportFilter filter) {
+    public ScatterChart buildChart(ConsumptionReportFilter filter) {
         Collection<ConsumptionDataset> consumptionDatasets = consumptionReportService.getConsumptionDatasets(filter);
 
-        List<Map<String, Object>> datasets = new ArrayList<>();
+        ScatterData data = new ScatterData();
+        ScatterChart chart = new ScatterChart(data);
+
         int index = 0;
         for (ConsumptionDataset consumptionDataset : consumptionDatasets) {
             String color = COLORS.get(index % COLORS.size());
-            Map<String, Object> dataset = new LinkedHashMap<>();
-            dataset.put("label", consumptionDataset.label);
-            dataset.put("data", toChartPoints(consumptionDataset.data));
-            dataset.put("borderColor", color);
-            dataset.put("backgroundColor", color);
-            dataset.put("pointRadius", 2);
-            dataset.put("pointHoverRadius", 5);
-            dataset.put("tension", 0.2);
-            datasets.add(dataset);
+            ScatterDataset dataset = new ScatterDataset()
+                    .setType("line")
+                    .setLabel(consumptionDataset.label)
+                    .setData(toChartPoints(consumptionDataset.data))
+                    .setBorderColor(color)
+                    .setBackgroundColor(color)
+                    .addPointRadius(2)
+                    .addPointHoverRadius(5)
+                    .setShowLine(true)
+                    .setTension(0.2);
+            data.addDataset(dataset);
             index++;
         }
 
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("datasets", datasets);
-
-        Map<String, Object> chart = new LinkedHashMap<>();
-        chart.put("type", "line");
-        chart.put("data", data);
         return chart;
     }
 
-    private List<Map<String, Object>> toChartPoints(List<Point> points) {
-        List<Map<String, Object>> chartPoints = new ArrayList<>();
-        for (Point point : points) {
-            Map<String, Object> chartPoint = new LinkedHashMap<>();
-            chartPoint.put("x", point.x.getTime());
-            chartPoint.put("y", roundGb(point.y));
-            chartPoints.add(chartPoint);
-        }
-        return chartPoints;
+    private List<ScatterDataPoint> toChartPoints(List<Point> points) {
+        return points.stream()
+                .map(point -> new ScatterDataPoint(point.x.getTime(), roundGb(point.y)))
+                .toList();
     }
 
     private float roundGb(float value) {
