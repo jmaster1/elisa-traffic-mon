@@ -1,4 +1,4 @@
-<title>etm<#if Jmaster.isLocalRequest()>*</#if></title>
+<title>etm<#if TemplateUtil.isLocalRequest()>*</#if></title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
