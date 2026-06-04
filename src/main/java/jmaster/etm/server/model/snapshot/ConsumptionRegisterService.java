@@ -9,6 +9,7 @@ import jmaster.etm.server.model.snapshot.http.DelegateHttpExecutor;
 import jmaster.etm.server.model.snapshot.http.HttpRequestData;
 import jmaster.etm.server.model.snapshot.http.HttpResponseData;
 import jmaster.etm.server.model.snapshot.http.LocalHttpExecutor;
+import jmaster.system.log.error.ErrorLogService;
 import jmaster.system.prefs.PrefsService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,6 +35,9 @@ public class ConsumptionRegisterService {
 
     @Autowired
     ConsumptionSnapshotRepository repository;
+
+    @Autowired
+    ErrorLogService errorLogService;
 
     @Autowired
     PrefsService prefsService;
@@ -108,6 +112,7 @@ public class ConsumptionRegisterService {
             }
         } catch (Exception ex) {
             logger.error("queryConsumptionSnapshots() failed", ex);
+            errorLogService.create(ex, null);
             lastError = ex;
             lastErrorDate = new Date();
         }
