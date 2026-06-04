@@ -91,6 +91,7 @@ public class ConsumptionRegisterService {
 
     @Scheduled(cron = "0 */10 * * * *")
     public void queryConsumptionSnapshots() {
+        clearLastError();
         try {
             FetchConfig fetchData = prefsService.getPrefs(FetchConfig.class);
             EtmPreferences etmPreferences = prefsService.getPrefs(EtmPreferences.class);

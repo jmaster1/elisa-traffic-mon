@@ -42,8 +42,10 @@
         <#if lastError??>
             <div class="alert alert-danger mt-3" role="alert">
                 <div class="fw-semibold">Last consumption query error</div>
-                <div>${lastError.date?datetime}</div>
-                <div>${lastError.message}</div>
+                <#if lastError.date??>
+                    <div>${lastError.date?datetime}</div>
+                </#if>
+                <div>${lastError.message!"Unknown error"}</div>
             </div>
         </#if>
         <pre id="fetchConfig" class=""></pre>
