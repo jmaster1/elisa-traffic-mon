@@ -23,21 +23,7 @@
                     <a class="nav-link" href="/consumption/config">
                         <@icon name="sliders"/>Config</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <@icon name="gear"/>Admin
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="/admin/httpsession/list">
-                                <@icon name="clock-history"/>HTTP Sessions</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/admin/prefs/list">
-                                <@icon name="sliders"/>Settings</a>
-                        </li>
-                    </ul>
-                </li>
+                <@adminMenu/>
             </#if>
         </ul>
     </div>
