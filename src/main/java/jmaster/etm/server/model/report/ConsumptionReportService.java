@@ -54,22 +54,12 @@ public class ConsumptionReportService {
         Date from = Date.from(monthStart.atStartOfDay(reportZoneId).toInstant());
         Date to = Date.from(monthStart.plusMonths(1).atStartOfDay(reportZoneId).toInstant().minusNanos(1));
 
-        List<MonthlyConsumptionProgress> progressList = new ArrayList<>();
-        Map<Long, ConsumptionSnapshot> phoneToSnapshot = new LinkedHashMap<>();
-        for (ConsumptionSnapshot snapshot : repository.findLatestByPhoneBetween(from, to)) {
-            phoneToSnapshot.put(snapshot.getPhoneNr(), snapshot);
-        }
-
+        List<ConsumptionSnapshot> snapshots = repository.findLatestByPhoneBetween(from, to);
+        List<MonthlyConsumptionProgress> progressList = new ArrayList<>(PhoneOwner.values().length);
         for (PhoneOwner owner : PhoneOwner.values()) {
-            ConsumptionSnapshot snapshot = phoneToSnapshot.remove(owner.phoneNr);
+            ConsumptionSnapshot snapshot = snapshots.stream().filter(s -> s.getPhoneNr() == owner.phoneNr)
+                    .findFirst().orElse(null);
             progressList.add(createMonthlyProgress(owner.phoneNr, owner.name(), snapshot, monthlyQuotaGb));
-        }
-        for (ConsumptionSnapshot snapshot : phoneToSnapshot.values()) {
-            Long phoneNr = snapshot.getPhoneNr();
-            if (PhoneOwner.isKnownPhone(phoneNr)) {
-                continue;
-            }
-            progressList.add(createMonthlyProgress(phoneNr, PhoneOwner.getPhoneLabel(phoneNr), snapshot, monthlyQuotaGb));
         }
         return progressList;
     }
@@ -84,7 +74,7 @@ public class ConsumptionReportService {
         progress.usedGbText = String.format(Locale.US, "%.2f", usedGb);
         progress.quotaGb = monthlyQuotaGb;
         progress.percent = monthlyQuotaGb <= 0 ? 0 : Math.round(usedGb * 100 / monthlyQuotaGb);
-        progress.cappedPercent = Math.max(0, Math.min(progress.percent, 100));
+        progress.cappedPercent = Math.clamp(progress.percent, 0, 100);
         return progress;
     }
 
