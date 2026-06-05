@@ -1,7 +1,5 @@
 package jmaster.etm.server.controller.system;
 
-import jmaster.system.user.UserRole;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -9,29 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
     @GetMapping("/")
-    public String welcome(Authentication authentication) {
-        if (hasRole(authentication, UserRole.admin)) {
-            return "redirect:/admin";
-        }
-        if (hasRole(authentication, UserRole.client)) {
-            return "redirect:/client";
-        }
-
-        return "welcome";
+    public String home() {
+        return "redirect:/consumption/report";
     }
 
     @GetMapping("/favicon.ico")
     public String favicon() {
         return "redirect:/static/favicon.svg";
-    }
-
-    private boolean hasRole(Authentication authentication, UserRole role) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return false;
-        }
-
-        String authorityName = "ROLE_" + role.name();
-        return authentication.getAuthorities().stream()
-                .anyMatch(authority -> authorityName.equals(authority.getAuthority()));
     }
 }

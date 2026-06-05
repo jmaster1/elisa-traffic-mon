@@ -1,4 +1,4 @@
-package jmaster.etm.server.controller.admin;
+package jmaster.etm.server.controller.system;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jmaster.core.controller.AbstractController;
@@ -7,18 +7,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class AdminLoginController {
+public class LoginController {
 
-    @GetMapping("/admin/login")
+    @GetMapping("/login")
     public String login(HttpServletRequest request, Model model) {
         moveMessage(request, model, AbstractController.ATTR_INFO_MESSAGE);
         moveMessage(request, model, AbstractController.ATTR_ERROR_MESSAGE);
-        return "admin/login";
-    }
-
-    @GetMapping("/login")
-    public String defaultLogin() {
-        return "redirect:/admin/login";
+        return "login";
     }
 
     private void moveMessage(HttpServletRequest request, Model model, String attribute) {

@@ -31,7 +31,7 @@
                         <span>etm</span>
                     </a>
                     <#if admin>
-                        <#include "/_/layout/admin-menu.ftlh">
+                        <#include "/_/layout/main-menu.ftlh">
                     </#if>
                 </div>
             </nav>
