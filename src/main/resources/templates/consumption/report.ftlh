@@ -2,8 +2,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <section class="d-grid gap-3">
-        <@pageFilter formState=reportFilter />
-
         <#if monthlyConsumptionProgress?? && monthlyConsumptionProgress?size gt 0>
             <section class="d-grid gap-2">
                 <#list monthlyConsumptionProgress as item>
@@ -27,6 +25,8 @@
             </section>
         </#if>
 
+        <@pageFilter formState=reportFilter />
+
         <div style="width: 100%; height: 620px">
             <canvas id="consumptionChart"></canvas>
         </div>
@@ -35,7 +35,7 @@
     <script>
         const config = ${chartJson?no_esc};
         const dateFormatter = new Intl.DateTimeFormat(undefined, {
-            timeZone: 'Europe/Tallinn',
+            timeZone: '${reportZoneId?js_string}',
             month: 'short',
             day: '2-digit',
             hour: '2-digit',
