@@ -13,6 +13,11 @@ import java.util.Map;
 public class FetchConfig {
 
 	/**
+	 * Snapshot retrieval enabled.
+	 */
+	public boolean enabled;
+
+	/**
 	 * uri to fetch consumption data from
 	 */
 	public String uri;
