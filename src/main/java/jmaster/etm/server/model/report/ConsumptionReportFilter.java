@@ -9,13 +9,9 @@ import jmaster.etm.server.model.snapshot.ConsumptionSnapshot;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.time.ZoneId;
-
 @Data
 @Accessors(chain = true)
 public class ConsumptionReportFilter extends DefaultFilter<ConsumptionSnapshot> {
-
-    private static final ZoneId REPORT_ZONE_ID = ZoneId.of("Europe/Tallinn");
 
     @Ui(label = "Phone")
     private PhoneOwner phoneOwner;
