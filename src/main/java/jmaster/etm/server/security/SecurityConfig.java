@@ -57,11 +57,11 @@ public class SecurityConfig {
                                 redirectWithFlash(
                                         request,
                                         response,
-                                        "/login",
-                                        AbstractController.ATTR_INFO_MESSAGE,
-                                        "You have signed out."))
+                        "/login",
+                        AbstractController.ATTR_INFO_MESSAGE,
+                        "You have signed out."))
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"))
+                        .deleteCookies("SESSION", "JSESSIONID"))
                 .build();
     }
 
