@@ -2,12 +2,30 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <section class="d-grid gap-3">
-        <div>
-            <h1 class="h4 mb-1">Consumption report</h1>
-            <div class="text-secondary">Used GB by phone number</div>
-        </div>
-
         <@pageFilter formState=reportFilter />
+
+        <#if monthlyConsumptionProgress?? && monthlyConsumptionProgress?size gt 0>
+            <section class="d-grid gap-2">
+                <#list monthlyConsumptionProgress as item>
+                    <div class="progress position-relative"
+                         style="height: 1.5rem;"
+                         role="progressbar"
+                         aria-label="${item.label}"
+                         aria-valuenow="${item.cappedPercent}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                        <div class="progress-bar"
+                             style="width: ${item.cappedPercent}%; background-color: ${item.color};"></div>
+                        <div class="position-absolute top-0 bottom-0 start-0 end-0 d-grid align-items-center px-3"
+                             style="grid-template-columns: minmax(8rem, 1fr) minmax(10rem, 1fr) 6rem; column-gap: 1rem;">
+                            <span>${item.label}</span>
+                            <span>${item.usedGbText} / ${item.quotaGb} GB</span>
+                            <span class="text-end">${item.percent}%</span>
+                        </div>
+                    </div>
+                </#list>
+            </section>
+        </#if>
 
         <div style="width: 100%; height: 620px">
             <canvas id="consumptionChart"></canvas>

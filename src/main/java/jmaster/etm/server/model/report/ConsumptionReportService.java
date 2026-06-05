@@ -6,9 +6,14 @@ import jmaster.etm.server.model.snapshot.ConsumptionSnapshotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -18,7 +23,7 @@ public class ConsumptionReportService {
     private final ConsumptionSnapshotRepository repository;
 
     public Collection<ConsumptionDataset> getConsumptionDatasets(ConsumptionReportFilter filter) {
-        Map<Long, ConsumptionDataset> phoneToDataset = new HashMap<>();
+        Map<Long, ConsumptionDataset> phoneToDataset = new LinkedHashMap<>();
         List<ConsumptionSnapshot> snapshots = filter.list(repository);
         for (ConsumptionSnapshot snapshot : snapshots) {
             Long phoneNr = snapshot.getPhoneNr();
@@ -26,8 +31,7 @@ public class ConsumptionReportService {
             if (dataset == null) {
                 phoneToDataset.put(phoneNr, dataset = new ConsumptionDataset());
                 dataset.phoneNr = phoneNr;
-                PhoneOwner owner = PhoneOwner.fromPhone(phoneNr);
-                dataset.label = owner != null ? owner.name() : phoneNr.toString();
+                dataset.label = PhoneOwner.getPhoneLabel(phoneNr);
             }
             Point lastAddedPoint = dataset.lastAddedPoint;
             if (lastAddedPoint == null || lastAddedPoint.y != snapshot.getUsedGb()) {
@@ -44,4 +48,44 @@ public class ConsumptionReportService {
         }
         return phoneToDataset.values();
     }
+
+    public List<MonthlyConsumptionProgress> getCurrentMonthProgress(int monthlyQuotaGb, ZoneId reportZoneId) {
+        LocalDate monthStart = LocalDate.now(reportZoneId).withDayOfMonth(1);
+        Date from = Date.from(monthStart.atStartOfDay(reportZoneId).toInstant());
+        Date to = Date.from(monthStart.plusMonths(1).atStartOfDay(reportZoneId).toInstant().minusNanos(1));
+
+        List<MonthlyConsumptionProgress> progressList = new ArrayList<>();
+        Map<Long, ConsumptionSnapshot> phoneToSnapshot = new LinkedHashMap<>();
+        for (ConsumptionSnapshot snapshot : repository.findLatestByPhoneBetween(from, to)) {
+            phoneToSnapshot.put(snapshot.getPhoneNr(), snapshot);
+        }
+
+        for (PhoneOwner owner : PhoneOwner.values()) {
+            ConsumptionSnapshot snapshot = phoneToSnapshot.remove(owner.phoneNr);
+            progressList.add(createMonthlyProgress(owner.phoneNr, owner.name(), snapshot, monthlyQuotaGb));
+        }
+        for (ConsumptionSnapshot snapshot : phoneToSnapshot.values()) {
+            Long phoneNr = snapshot.getPhoneNr();
+            if (PhoneOwner.isKnownPhone(phoneNr)) {
+                continue;
+            }
+            progressList.add(createMonthlyProgress(phoneNr, PhoneOwner.getPhoneLabel(phoneNr), snapshot, monthlyQuotaGb));
+        }
+        return progressList;
+    }
+
+    private MonthlyConsumptionProgress createMonthlyProgress(Long phoneNr, String label, ConsumptionSnapshot snapshot, int monthlyQuotaGb) {
+        float usedGb = snapshot == null || snapshot.getUsedGb() == null ? 0f : snapshot.getUsedGb();
+
+        MonthlyConsumptionProgress progress = new MonthlyConsumptionProgress();
+        progress.phoneNr = phoneNr;
+        progress.label = label;
+        progress.color = ConsumptionReportColors.forPhone(phoneNr);
+        progress.usedGbText = String.format(Locale.US, "%.2f", usedGb);
+        progress.quotaGb = monthlyQuotaGb;
+        progress.percent = monthlyQuotaGb <= 0 ? 0 : Math.round(usedGb * 100 / monthlyQuotaGb);
+        progress.cappedPercent = Math.max(0, Math.min(progress.percent, 100));
+        return progress;
+    }
+
 }

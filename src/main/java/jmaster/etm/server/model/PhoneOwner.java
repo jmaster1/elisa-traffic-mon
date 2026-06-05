@@ -22,4 +22,17 @@ public enum PhoneOwner {
         }
         return null;
     }
+
+    public static PhoneOwner fromPhone(Long phoneNr) {
+        return phoneNr == null ? null : fromPhone(phoneNr.longValue());
+    }
+
+    public static String getPhoneLabel(Long phoneNr) {
+        PhoneOwner owner = fromPhone(phoneNr);
+        return owner == null ? String.valueOf(phoneNr) : owner.name();
+    }
+
+    public static boolean isKnownPhone(Long phoneNr) {
+        return fromPhone(phoneNr) != null;
+    }
 }

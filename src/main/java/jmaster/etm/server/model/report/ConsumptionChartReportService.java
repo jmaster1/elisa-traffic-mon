@@ -14,17 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConsumptionChartReportService {
 
-    private static final List<String> COLORS = List.of(
-            "#2563eb",
-            "#dc2626",
-            "#16a34a",
-            "#9333ea",
-            "#ea580c",
-            "#0891b2",
-            "#be123c",
-            "#4f46e5"
-    );
-
     private final ConsumptionReportService consumptionReportService;
 
     public ScatterChart buildChart(ConsumptionReportFilter filter) {
@@ -33,9 +22,8 @@ public class ConsumptionChartReportService {
         ScatterData data = new ScatterData();
         ScatterChart chart = new ScatterChart(data);
 
-        int index = 0;
         for (ConsumptionDataset consumptionDataset : consumptionDatasets) {
-            String color = COLORS.get(index % COLORS.size());
+            String color = ConsumptionReportColors.forPhone(consumptionDataset.phoneNr);
             ScatterDataset dataset = new ScatterDataset()
                     .setType("line")
                     .setLabel(consumptionDataset.label)
@@ -47,7 +35,6 @@ public class ConsumptionChartReportService {
                     .setShowLine(true)
                     .setTension(0.2);
             data.addDataset(dataset);
-            index++;
         }
 
         return chart;

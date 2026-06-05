@@ -12,6 +12,7 @@ import java.util.Map;
 @Ui(label = "Fetch config", icon = "key")
 public class FetchConfig {
 
+	public int monthlyQuotaGb = 500;
 	/**
 	 * Snapshot retrieval enabled.
 	 */
