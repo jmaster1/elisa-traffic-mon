@@ -1,6 +1,9 @@
-package jmaster.etm.server.model.snapshot;
+package jmaster.etm.server.controller;
 
 import jmaster.core.controller.AbstractController;
+import jmaster.etm.server.model.snapshot.ConsumptionRegisterService;
+import jmaster.etm.server.model.snapshot.FetchConfig;
+import jmaster.etm.server.model.snapshot.LastError;
 import jmaster.system.prefs.PrefsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

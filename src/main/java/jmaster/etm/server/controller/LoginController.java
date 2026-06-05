@@ -1,4 +1,4 @@
-package jmaster.etm.server.controller.system;
+package jmaster.etm.server.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jmaster.core.controller.AbstractController;
