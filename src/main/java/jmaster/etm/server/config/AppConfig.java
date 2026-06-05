@@ -27,7 +27,6 @@ public class AppConfig {
     @PostConstruct
     public void init() {
         AdminPrefsController.KNOWN_PREFS_TYPES = new Class[]{
-                EtmPreferences.class,
                 FetchConfig.class,
                 SystemPrefs.class,
         };
