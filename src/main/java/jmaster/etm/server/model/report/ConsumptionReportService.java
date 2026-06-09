@@ -20,9 +20,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ConsumptionReportService {
 
+    private static final Integer MAX_DATA_SIZE = 50000;
+
     private final ConsumptionSnapshotRepository repository;
 
     public Collection<ConsumptionDataset> getConsumptionDatasets(ConsumptionReportFilter filter) {
+        filter.setSize(MAX_DATA_SIZE);
         Map<Long, ConsumptionDataset> phoneToDataset = new LinkedHashMap<>();
         List<ConsumptionSnapshot> snapshots = filter.list(repository);
         for (ConsumptionSnapshot snapshot : snapshots) {
