@@ -12,21 +12,26 @@ public interface ConsumptionSnapshotRepository extends JpaRepository<Consumption
 		JpaSpecificationExecutor<ConsumptionSnapshot>
 {
     @Query(value = """
-            SELECT snapshot.*
-            FROM consumption_snapshot snapshot
-            WHERE snapshot.timestamp BETWEEN :from AND :to
-              AND NOT EXISTS (
-                  SELECT 1
-                  FROM consumption_snapshot newer
-                  WHERE newer.phone_nr <=> snapshot.phone_nr
-                    AND newer.timestamp BETWEEN :from AND :to
-                    AND (
-                        newer.timestamp > snapshot.timestamp
-                        OR (newer.timestamp = snapshot.timestamp AND newer.id > snapshot.id)
-                    )
-              )
-            ORDER BY snapshot.phone_nr
-            """, nativeQuery = true)
+        SELECT
+            x.id,
+            x.created,
+            x.phone_nr,
+            x.timestamp,
+            x.used_gb
+        FROM (
+            SELECT
+                cs.*,
+                ROW_NUMBER() OVER (
+                    PARTITION BY cs.phone_nr
+                    ORDER BY cs.timestamp DESC, cs.id DESC
+                ) AS rn
+            FROM consumption_snapshot cs
+            WHERE cs.timestamp >= :from
+              AND cs.timestamp < :to
+        ) x
+        WHERE x.rn = 1
+        ORDER BY x.phone_nr
+        """, nativeQuery = true)
     List<ConsumptionSnapshot> findLatestByPhoneBetween(
             @Param("from") Date from,
             @Param("to") Date to);
