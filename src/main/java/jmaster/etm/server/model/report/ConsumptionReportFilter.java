@@ -9,6 +9,9 @@ import jmaster.etm.server.model.snapshot.ConsumptionSnapshot;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 @Data
 @Accessors(chain = true)
 public class ConsumptionReportFilter extends DefaultFilter<ConsumptionSnapshot> {
@@ -23,5 +26,14 @@ public class ConsumptionReportFilter extends DefaultFilter<ConsumptionSnapshot> 
     protected void apply(SpecBuilder<ConsumptionSnapshot> spec) {
         spec.eq(phoneOwner != null ? phoneOwner.phoneNr : null, ConsumptionSnapshot.Fields.phoneNr);
         timestampRange.apply(spec);
+    }
+
+    public void normalizeDates(ZoneId zoneId) {
+        timestampRange.setFrom(atUtc(timestampRange.getFrom(), zoneId));
+        timestampRange.setTo(atUtc(timestampRange.getTo(), zoneId));
+    }
+
+    private LocalDateTime atUtc(LocalDateTime value, ZoneId zoneId) {
+        return value == null ? null : LocalDateTime.ofInstant(value.atZone(zoneId).toInstant(), ZoneId.of("UTC"));
     }
 }

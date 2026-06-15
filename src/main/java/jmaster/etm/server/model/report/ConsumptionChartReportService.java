@@ -7,7 +7,6 @@ import software.xdev.chartjs.model.data.ScatterData;
 import software.xdev.chartjs.model.datapoint.ScatterDataPoint;
 import software.xdev.chartjs.model.dataset.ScatterDataset;
 
-import java.time.ZoneId;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class ConsumptionChartReportService {
 
     private final ConsumptionReportService consumptionReportService;
 
-    public ScatterChart buildChart(ConsumptionReportFilter filter, ZoneId zoneId) {
+    public ScatterChart buildChart(ConsumptionReportFilter filter) {
         Collection<ConsumptionDataset> consumptionDatasets = consumptionReportService.getConsumptionDatasets(filter);
 
         ScatterData data = new ScatterData();
@@ -28,7 +27,7 @@ public class ConsumptionChartReportService {
             ScatterDataset dataset = new ScatterDataset()
                     .setType("line")
                     .setLabel(consumptionDataset.label)
-                    .setData(toChartPoints(consumptionDataset.data, zoneId))
+                    .setData(toChartPoints(consumptionDataset.data))
                     .setBorderColor(color)
                     .setBackgroundColor(color)
                     .addPointRadius(2)
@@ -41,14 +40,10 @@ public class ConsumptionChartReportService {
         return chart;
     }
 
-    private List<ScatterDataPoint> toChartPoints(List<Point> points, ZoneId zoneId) {
+    private List<ScatterDataPoint> toChartPoints(List<Point> points) {
         return points.stream()
-                .map(point -> new ScatterDataPoint(toEpochMillis(point, zoneId), roundGb(point.y)))
+                .map(point -> new ScatterDataPoint(point.x.getTime(), roundGb(point.y)))
                 .toList();
-    }
-
-    private long toEpochMillis(Point point, ZoneId zoneId) {
-        return point.x.toInstant().atZone(zoneId).toInstant().toEpochMilli();
     }
 
     private float roundGb(float value) {
