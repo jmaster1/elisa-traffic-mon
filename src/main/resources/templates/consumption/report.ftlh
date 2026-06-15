@@ -12,14 +12,17 @@
                          aria-valuenow="${item.cappedPercent}"
                          aria-valuemin="0"
                          aria-valuemax="100">
+
                         <div class="progress-bar"
-                             style="width: ${item.cappedPercent}%; background-color: ${item.color};"></div>
-                        <div class="position-absolute top-0 bottom-0 start-0 end-0 d-grid align-items-center px-3"
-                             style="grid-template-columns: minmax(8rem, 1fr) minmax(10rem, 1fr) 6rem; column-gap: 1rem;">
-                            <span>${item.label}</span>
-                            <span>${item.usedGbText} / ${item.quotaGb} GB</span>
-                            <span class="text-end">${item.percent}%</span>
+                             style="width: ${item.cappedPercent}%; background-color: ${item.color};">
                         </div>
+
+                        <div class="progress-content">
+                            <span class="progress-label">${item.label}</span>
+                            <span class="progress-usage">${item.usedGbText} / ${item.quotaGb} GB</span>
+                            <span class="progress-percent">${item.percent}%</span>
+                        </div>
+
                     </div>
                 </#list>
             </section>
