@@ -29,12 +29,14 @@ public class ConsumptionReportController extends AbstractController {
     @GetMapping({"", "/"})
     String chart(ConsumptionReportFilter filter, Model model) {
         ZoneId zoneId = resolveZoneId();
-        filter.normalizeDates(zoneId);
+        filter.normalizeDatesToUtc(zoneId);
         AbstractChart chart = consumptionChartReportService.buildChart(filter);
         FetchConfig fetchConfig = prefsService.getPrefs(FetchConfig.class);
-        int monthlyQuotaGb = fetchConfig == null ? 0 : fetchConfig.monthlyQuotaGb;
+
         model.addAttribute("chartJson", chart.toJson());
         model.addAttribute("reportZoneId", zoneId.getId());
+
+        int monthlyQuotaGb = fetchConfig == null ? 0 : fetchConfig.monthlyQuotaGb;
         model.addAttribute("monthlyConsumptionProgress",
                 consumptionReportService.getCurrentMonthProgress(monthlyQuotaGb, zoneId));
         createFilterFormState(filter, model, "reportFilter").setMethod("get");

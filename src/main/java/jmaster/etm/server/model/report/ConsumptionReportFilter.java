@@ -28,7 +28,7 @@ public class ConsumptionReportFilter extends DefaultFilter<ConsumptionSnapshot> 
         timestampRange.apply(spec);
     }
 
-    public void normalizeDates(ZoneId zoneId) {
+    public void normalizeDatesToUtc(ZoneId zoneId) {
         timestampRange.setFrom(atUtc(timestampRange.getFrom(), zoneId));
         timestampRange.setTo(atUtc(timestampRange.getTo(), zoneId));
     }
