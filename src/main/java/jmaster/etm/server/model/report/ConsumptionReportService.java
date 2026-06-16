@@ -27,6 +27,8 @@ public class ConsumptionReportService {
     public Collection<ConsumptionDataset> getConsumptionDatasets(ConsumptionReportFilter filter) {
         filter.setSize(MAX_DATA_SIZE);
         Map<Long, ConsumptionDataset> phoneToDataset = new LinkedHashMap<>();
+        Map<Long, Point> phoneToLastAddedPoint = new LinkedHashMap<>();
+        Map<Long, ConsumptionSnapshot> phoneToLastSkippedSnapshot = new LinkedHashMap<>();
         List<ConsumptionSnapshot> snapshots = filter.list(repository);
         for (ConsumptionSnapshot snapshot : snapshots) {
             Long phoneNr = snapshot.getPhoneNr();
@@ -36,17 +38,22 @@ public class ConsumptionReportService {
                 dataset.phoneNr = phoneNr;
                 dataset.label = PhoneOwner.getPhoneLabel(phoneNr);
             }
-            Point lastAddedPoint = dataset.lastAddedPoint;
+            Point lastAddedPoint = phoneToLastAddedPoint.get(phoneNr);
             if (lastAddedPoint == null || lastAddedPoint.y != snapshot.getUsedGb()) {
-                dataset.data.add(dataset.lastAddedPoint = new Point(snapshot));
-                dataset.lastSkippedSnapshot = null;
+                Point point = new Point(snapshot);
+                dataset.data.add(point);
+                phoneToLastAddedPoint.put(phoneNr, point);
+                phoneToLastSkippedSnapshot.remove(phoneNr);
             } else {
-                dataset.lastSkippedSnapshot = snapshot;
+                phoneToLastSkippedSnapshot.put(phoneNr, snapshot);
             }
         }
         for (ConsumptionDataset dataset : phoneToDataset.values()) {
-            if (dataset.lastSkippedSnapshot != null) {
-                dataset.data.add(dataset.lastAddedPoint = new Point(dataset.lastSkippedSnapshot));
+            ConsumptionSnapshot lastSkippedSnapshot = phoneToLastSkippedSnapshot.get(dataset.phoneNr);
+            if (lastSkippedSnapshot != null) {
+                Point point = new Point(lastSkippedSnapshot);
+                dataset.data.add(point);
+                phoneToLastAddedPoint.put(dataset.phoneNr, point);
             }
         }
         return phoneToDataset.values();
