@@ -1,15 +1,13 @@
 package jmaster.etm.server.model.snapshot;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import jmaster.core.repo.JpaSpecRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.List;
 
-public interface ConsumptionSnapshotRepository extends JpaRepository<ConsumptionSnapshot, Long>,
-		JpaSpecificationExecutor<ConsumptionSnapshot>
+public interface ConsumptionSnapshotRepository extends JpaSpecRepository<ConsumptionSnapshot, Long>
 {
     @Query(value = """
         SELECT

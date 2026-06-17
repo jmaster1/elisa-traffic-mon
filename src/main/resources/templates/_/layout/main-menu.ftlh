@@ -24,6 +24,10 @@
                         <@icon name="bar-chart"/>Daily usage</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/consumption/list">
+                        <@icon name="database"/>Snapshots</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/consumption/config">
                         <@icon name="sliders"/>Config</a>
                 </li>
