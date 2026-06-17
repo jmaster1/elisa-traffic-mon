@@ -3,6 +3,7 @@ package jmaster.etm.server.security;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jmaster.core.controller.AbstractController;
+import jmaster.core.security.LoginRedirectEntryPoint;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,10 +40,18 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().hasRole(EtmUserRole.admin.name()))
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(new LoginRedirectEntryPoint("/login", "/admin", "/consumption")))
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/consumption/report", true)
+                        .successHandler((request, response, authentication) ->
+                                REDIRECT_STRATEGY.sendRedirect(
+                                        request,
+                                        response,
+                                        LoginRedirectEntryPoint.consumeLoginRedirectUrl(
+                                                request.getSession(false),
+                                                "/consumption/report")))
                         .failureHandler((request, response, exception) ->
                                 redirectWithFlash(
                                         request,
