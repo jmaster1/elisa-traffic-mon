@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -100,7 +101,7 @@ public class ConsumptionRegisterService {
                 for (PhoneOwner phoneOwner : PhoneOwner.values()) {
                     BigDecimal usedGb = queryConsumptionSnapshot(phoneOwner, fetchConfig);
                     ConsumptionSnapshot snapshot = new ConsumptionSnapshot();
-                    snapshot.setTimestamp(new Date());
+                    snapshot.setTimestamp(Instant.now());
                     snapshot.setPhoneNr(phoneOwner.phoneNr);
                     snapshot.setUsedGb(usedGb.floatValue());
                     repository.save(snapshot);

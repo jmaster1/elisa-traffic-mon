@@ -6,9 +6,9 @@ import jmaster.etm.server.model.snapshot.ConsumptionSnapshotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -24,12 +24,12 @@ public class ConsumptionReportService {
 
     private final ConsumptionSnapshotRepository repository;
 
-    public Collection<ConsumptionDataset> getConsumptionDatasets(ConsumptionReportFilter filter) {
+    public Collection<ConsumptionDataset> getConsumptionDatasets(ConsumptionReportFilter filter, ZoneId reportZoneId) {
         filter.setSize(MAX_DATA_SIZE);
         Map<Long, ConsumptionDataset> phoneToDataset = new LinkedHashMap<>();
         Map<Long, Point> phoneToLastAddedPoint = new LinkedHashMap<>();
         Map<Long, ConsumptionSnapshot> phoneToLastSkippedSnapshot = new LinkedHashMap<>();
-        List<ConsumptionSnapshot> snapshots = filter.list(repository);
+        List<ConsumptionSnapshot> snapshots = filter.list(repository, reportZoneId);
         for (ConsumptionSnapshot snapshot : snapshots) {
             Long phoneNr = snapshot.getPhoneNr();
             ConsumptionDataset dataset = phoneToDataset.get(phoneNr);
@@ -61,8 +61,8 @@ public class ConsumptionReportService {
 
     public List<MonthlyConsumptionProgress> getCurrentMonthProgress(int monthlyQuotaGb, ZoneId reportZoneId) {
         LocalDate monthStart = LocalDate.now(reportZoneId).withDayOfMonth(1);
-        Date from = Date.from(monthStart.atStartOfDay(reportZoneId).toInstant());
-        Date to = Date.from(monthStart.plusMonths(1).atStartOfDay(reportZoneId).toInstant().minusNanos(1));
+        Instant from = monthStart.atStartOfDay(reportZoneId).toInstant();
+        Instant to = monthStart.plusMonths(1).atStartOfDay(reportZoneId).toInstant().minusNanos(1);
 
         List<ConsumptionSnapshot> snapshots = repository.findLatestByPhoneBetween(from, to);
         List<MonthlyConsumptionProgress> progressList = new ArrayList<>(PhoneOwner.values().length);

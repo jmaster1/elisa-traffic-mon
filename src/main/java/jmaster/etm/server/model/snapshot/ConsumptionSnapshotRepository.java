@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 public interface ConsumptionSnapshotRepository extends JpaRepository<ConsumptionSnapshot, Long>,
@@ -33,6 +33,6 @@ public interface ConsumptionSnapshotRepository extends JpaRepository<Consumption
         ORDER BY x.phone_nr
         """, nativeQuery = true)
     List<ConsumptionSnapshot> findLatestByPhoneBetween(
-            @Param("from") Date from,
-            @Param("to") Date to);
+            @Param("from") Instant from,
+            @Param("to") Instant to);
 }

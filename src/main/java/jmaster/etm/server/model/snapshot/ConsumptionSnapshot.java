@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Entity
 @Table(
@@ -31,5 +31,5 @@ public class ConsumptionSnapshot extends AbstractEntity<Long> {
 	private Float usedGb;
 	
 	@Column(name = "timestamp")
-	private Date timestamp;
+	private Instant timestamp;
 }

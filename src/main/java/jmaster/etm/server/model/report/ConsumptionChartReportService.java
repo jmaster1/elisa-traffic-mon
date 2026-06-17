@@ -7,6 +7,7 @@ import software.xdev.chartjs.model.data.ScatterData;
 import software.xdev.chartjs.model.datapoint.ScatterDataPoint;
 import software.xdev.chartjs.model.dataset.ScatterDataset;
 
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,8 +17,8 @@ public class ConsumptionChartReportService {
 
     private final ConsumptionReportService consumptionReportService;
 
-    public ScatterChart buildChart(ConsumptionReportFilter filter) {
-        Collection<ConsumptionDataset> consumptionDatasets = consumptionReportService.getConsumptionDatasets(filter);
+    public ScatterChart buildChart(ConsumptionReportFilter filter, ZoneId zoneId) {
+        Collection<ConsumptionDataset> consumptionDatasets = consumptionReportService.getConsumptionDatasets(filter, zoneId);
 
         ScatterData data = new ScatterData();
         ScatterChart chart = new ScatterChart(data);
@@ -42,7 +43,7 @@ public class ConsumptionChartReportService {
 
     private List<ScatterDataPoint> toChartPoints(List<Point> points) {
         return points.stream()
-                .map(point -> new ScatterDataPoint(point.x.getTime(), roundGb(point.y)))
+                .map(point -> new ScatterDataPoint(point.x.toEpochMilli(), roundGb(point.y)))
                 .toList();
     }
 

@@ -29,8 +29,7 @@ public class ConsumptionReportController extends AbstractController {
     @GetMapping({"", "/"})
     String chart(ConsumptionReportFilter filter, Model model) {
         ZoneId zoneId = resolveZoneId();
-        ConsumptionReportFilter queryFilter = filter.normalizedDatesToUtc(zoneId);
-        AbstractChart chart = consumptionChartReportService.buildChart(queryFilter);
+        AbstractChart chart = consumptionChartReportService.buildChart(filter, zoneId);
         FetchConfig fetchConfig = prefsService.getPrefs(FetchConfig.class);
 
         model.addAttribute("chartJson", chart.toJson());
