@@ -32,8 +32,9 @@ public class DailyUsageChartReportService {
     private EntityManager entityManager;
 
     public BarChart buildChart(ConsumptionReportFilter filter, ZoneId zoneId) {
-        List<LocalDate> dates = createDateRange(filter);
-        Map<Long, Map<LocalDate, Float>> phoneToDateLastUsedGb = getDailyLastUsedGb(filter, dates, zoneId);
+        List<LocalDate> dates = createReportDates(filter);
+        List<DailyLastUsedGb> usageData = getDailyLastUsedGb(filter, dates, zoneId);
+        Map<Long, Map<LocalDate, DailyUsageBoundary>> phoneToDateLastUsedGb = toPhoneDateMap(usageData);
 
         BarData data = new BarData();
         BarChart chart = new BarChart(data);
@@ -50,10 +51,10 @@ public class DailyUsageChartReportService {
             dataset.setLabel(PhoneOwner.getPhoneLabel(phoneNr));
             dataset.setBackgroundColor(color);
             dataset.setBorderColor(color);
-            Map<LocalDate, Float> dateToLastUsedGb = phoneToDateLastUsedGb.getOrDefault(phoneNr, Map.of());
+            Map<LocalDate, DailyUsageBoundary> dateToBoundary = phoneToDateLastUsedGb.getOrDefault(phoneNr, Map.of());
             dates.forEach(date -> dataset.addData(roundGb(getUsageGb(
-                    dateToLastUsedGb.get(date),
-                    dateToLastUsedGb.get(date.minusDays(1))))));
+                    dateToBoundary.get(date),
+                    dateToBoundary.get(date.minusDays(1))))));
             data.addDataset(dataset);
         }
 
@@ -61,7 +62,7 @@ public class DailyUsageChartReportService {
     }
 
     private List<Long> createPhoneNrList(ConsumptionReportFilter filter,
-                                         Map<Long, Map<LocalDate, Float>> phoneToDateLastUsedGb) {
+                                         Map<Long, Map<LocalDate, DailyUsageBoundary>> phoneToDateLastUsedGb) {
         List<Long> phoneNrs = new ArrayList<>();
         if (filter.getPhoneOwner() != null) {
             phoneNrs.add(filter.getPhoneOwner().phoneNr);
@@ -76,7 +77,7 @@ public class DailyUsageChartReportService {
         return phoneNrs;
     }
 
-    private List<LocalDate> createDateRange(ConsumptionReportFilter filter) {
+    private List<LocalDate> createReportDates(ConsumptionReportFilter filter) {
         LocalDate from = filter.getTimestampRange().getFrom() == null ? null :
                 filter.getTimestampRange().getFrom().toLocalDate();
         LocalDate to = filter.getTimestampRange().getTo() == null ? null :
@@ -91,11 +92,11 @@ public class DailyUsageChartReportService {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<Long, Map<LocalDate, Float>> getDailyLastUsedGb(ConsumptionReportFilter filter,
-                                                                List<LocalDate> reportDates,
-                                                                ZoneId zoneId) {
+    private List<DailyLastUsedGb> getDailyLastUsedGb(ConsumptionReportFilter filter,
+                                                     List<LocalDate> reportDates,
+                                                     ZoneId zoneId) {
         if (reportDates.isEmpty()) {
-            return Map.of();
+            return List.of();
         }
 
         LocalDate queryFromDate = reportDates.getFirst().minusDays(1);
@@ -124,6 +125,10 @@ public class DailyUsageChartReportService {
                         cs.used_gb,
                         ROW_NUMBER() OVER (
                             PARTITION BY day_value, phone_nr
+                            ORDER BY cs.timestamp ASC, cs.id ASC
+                        ) AS first_rn,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY day_value, phone_nr
                             ORDER BY cs.timestamp DESC, cs.id DESC
                         ) AS last_rn
                     FROM snapshots cs
@@ -131,9 +136,10 @@ public class DailyUsageChartReportService {
                 SELECT
                     phone_nr,
                     day_value,
-                    used_gb AS last_used_gb
+                    MAX(CASE WHEN first_rn = 1 THEN used_gb END) AS first_used_gb,
+                    MAX(CASE WHEN last_rn = 1 THEN used_gb END) AS last_used_gb
                 FROM ranked
-                WHERE last_rn = 1
+                GROUP BY phone_nr, day_value
                 ORDER BY phone_nr, day_value
                 """.formatted(createPhoneWhereSql(filter));
 
@@ -145,21 +151,32 @@ public class DailyUsageChartReportService {
         query.setParameter("queryFrom", toSqlDateTime(queryFrom));
         query.setParameter("queryTo", toSqlDateTime(queryTo));
 
-        Map<Long, Map<LocalDate, Float>> result = new LinkedHashMap<>();
+        List<DailyLastUsedGb> result = new ArrayList<>();
         for (Object[] row : (List<Object[]>)query.getResultList()) {
             Long rowPhoneNr = ((Number)row[0]).longValue();
             LocalDate date = toLocalDate(row[1]);
-            Float lastUsedGb = ((Number)row[2]).floatValue();
-            result.computeIfAbsent(rowPhoneNr, k -> new LinkedHashMap<>()).put(date, lastUsedGb);
+            Float firstUsedGb = ((Number)row[2]).floatValue();
+            Float lastUsedGb = ((Number)row[3]).floatValue();
+            result.add(new DailyLastUsedGb(rowPhoneNr, date, firstUsedGb, lastUsedGb));
         }
         return result;
     }
 
-    private float getUsageGb(Float currentDayLastUsedGb, Float previousDayLastUsedGb) {
-        if (currentDayLastUsedGb == null || previousDayLastUsedGb == null) {
+    private Map<Long, Map<LocalDate, DailyUsageBoundary>> toPhoneDateMap(List<DailyLastUsedGb> rows) {
+        Map<Long, Map<LocalDate, DailyUsageBoundary>> result = new LinkedHashMap<>();
+        for (DailyLastUsedGb row : rows) {
+            result.computeIfAbsent(row.phoneNr(), k -> new LinkedHashMap<>())
+                    .put(row.date(), new DailyUsageBoundary(row.firstUsedGb(), row.lastUsedGb()));
+        }
+        return result;
+    }
+
+    private float getUsageGb(DailyUsageBoundary currentDay, DailyUsageBoundary previousDay) {
+        if (currentDay == null || currentDay.lastUsedGb() == null) {
             return 0f;
         }
-        return Math.max(currentDayLastUsedGb - previousDayLastUsedGb, 0f);
+        Float baseUsedGb = previousDay == null ? currentDay.firstUsedGb() : previousDay.lastUsedGb();
+        return baseUsedGb == null ? 0f : Math.max(currentDay.lastUsedGb() - baseUsedGb, 0f);
     }
 
     private String createPhoneWhereSql(ConsumptionReportFilter filter) {
@@ -180,5 +197,11 @@ public class DailyUsageChartReportService {
 
     private float roundGb(float value) {
         return Math.round(value * 100) / 100f;
+    }
+
+    private record DailyLastUsedGb(Long phoneNr, LocalDate date, Float firstUsedGb, Float lastUsedGb) {
+    }
+
+    private record DailyUsageBoundary(Float firstUsedGb, Float lastUsedGb) {
     }
 }
