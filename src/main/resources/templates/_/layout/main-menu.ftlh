@@ -20,6 +20,10 @@
                         <@icon name="graph-up"/>Report</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/consumption/report/daily-usage">
+                        <@icon name="bar-chart"/>Daily usage</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/consumption/config">
                         <@icon name="sliders"/>Config</a>
                 </li>

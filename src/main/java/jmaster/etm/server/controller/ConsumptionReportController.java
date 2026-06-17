@@ -2,6 +2,7 @@ package jmaster.etm.server.controller;
 
 import jmaster.core.controller.AbstractController;
 import jmaster.etm.server.model.report.ConsumptionChartReportService;
+import jmaster.etm.server.model.report.DailyUsageChartReportService;
 import jmaster.etm.server.model.report.ConsumptionReportFilter;
 import jmaster.etm.server.model.report.ConsumptionReportService;
 import jmaster.etm.server.model.snapshot.FetchConfig;
@@ -22,6 +23,8 @@ public class ConsumptionReportController extends AbstractController {
 
     private final ConsumptionChartReportService consumptionChartReportService;
 
+    private final DailyUsageChartReportService dailyUsageChartReportService;
+
     private final ConsumptionReportService consumptionReportService;
 
     private final PrefsService prefsService;
@@ -40,5 +43,14 @@ public class ConsumptionReportController extends AbstractController {
                 consumptionReportService.getCurrentMonthProgress(monthlyQuotaGb, zoneId));
         createFilterFormState(filter, model, "reportFilter").setMethod("get");
         return "consumption/report";
+    }
+
+    @GetMapping("/daily-usage")
+    String dailyUsage(ConsumptionReportFilter filter, Model model) {
+        ZoneId zoneId = resolveZoneId();
+        AbstractChart chart = dailyUsageChartReportService.buildChart(filter, zoneId);
+        model.addAttribute("chartJson", chart.toJson());
+        createFilterFormState(filter, model, "reportFilter").setMethod("get");
+        return "consumption/dailyUsage";
     }
 }

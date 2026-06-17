@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,12 +25,19 @@ public class ConsumptionReportService {
 
     private final ConsumptionSnapshotRepository repository;
 
-    public Collection<ConsumptionDataset> getConsumptionDatasets(ConsumptionReportFilter filter, ZoneId reportZoneId) {
+    public List<ConsumptionSnapshot> getConsumptionSnapshots(ConsumptionReportFilter filter, ZoneId reportZoneId) {
         filter.setSize(MAX_DATA_SIZE);
+        return filter.list(repository, reportZoneId).stream()
+                .filter(snapshot -> snapshot.getTimestamp() != null)
+                .sorted(Comparator.comparing(ConsumptionSnapshot::getTimestamp))
+                .toList();
+    }
+
+    public Collection<ConsumptionDataset> getConsumptionDatasets(ConsumptionReportFilter filter, ZoneId reportZoneId) {
         Map<Long, ConsumptionDataset> phoneToDataset = new LinkedHashMap<>();
         Map<Long, Point> phoneToLastAddedPoint = new LinkedHashMap<>();
         Map<Long, ConsumptionSnapshot> phoneToLastSkippedSnapshot = new LinkedHashMap<>();
-        List<ConsumptionSnapshot> snapshots = filter.list(repository, reportZoneId);
+        List<ConsumptionSnapshot> snapshots = getConsumptionSnapshots(filter, reportZoneId);
         for (ConsumptionSnapshot snapshot : snapshots) {
             Long phoneNr = snapshot.getPhoneNr();
             ConsumptionDataset dataset = phoneToDataset.get(phoneNr);
