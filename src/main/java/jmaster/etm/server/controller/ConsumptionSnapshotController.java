@@ -3,10 +3,11 @@ package jmaster.etm.server.controller;
 import jmaster.core.controller.AbstractEntityController;
 import jmaster.core.model.AbstractEntity;
 import jmaster.core.model.filter.DefaultFilter;
+import jmaster.core.service.EntityIO;
 import jmaster.etm.server.model.PhoneOwner;
 import jmaster.etm.server.model.report.ConsumptionReportFilter;
 import jmaster.etm.server.model.snapshot.ConsumptionSnapshot;
-import jmaster.etm.server.model.snapshot.ConsumptionSnapshotService;
+import jmaster.etm.server.model.snapshot.ConsumptionSnapshotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ConsumptionSnapshotController
         extends AbstractEntityController<Long, ConsumptionSnapshot, ConsumptionReportFilter> {
 
-    private final ConsumptionSnapshotService service;
+    private final ConsumptionSnapshotRepository repository;
 
     @Override
     protected void configure() {
         config
-                .setEntityIO(service.getEntityIO())
+                .setEntityIO(EntityIO.readOnly(repository))
                 .filterDefaultSort(ConsumptionSnapshot.Fields.timestamp, DefaultFilter.SORT_DESC)
                 .pageModel(model -> {
                     model.useProperties(
