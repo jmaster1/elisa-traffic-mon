@@ -1,6 +1,6 @@
 spring:
   application:
-    name: server
+    name: etm
   web:
     resources:
       add-mappings: false
