@@ -1,0 +1,33 @@
+Это project prompt для `elisa-traffic-mon`.
+Используй его вместе с общим `jmaster-web/docs/codex/workspace-prompt.txt` из проекта `jmaster-web`.
+Все пути ниже относительные: `elisa-traffic-mon/...` и `jmaster-web/...` считаются от корня workspace.
+
+Role:
+`elisa-traffic-mon` / ETM - клиентское Spring-приложение поверх `jmaster-web` для мониторинга потребления/traffic данных.
+
+Главные правила
+- Отвечай по-русски.
+- Не запускай сборку, компиляцию, тесты, Maven/Gradle lifecycle, server, browser или dev-server без прямой просьбы.
+- Если пользователь задает вопрос, отвечай, не правь код.
+- Перед правками смотри `git status --short` в `elisa-traffic-mon`.
+
+Project map:
+- `src/main/java/jmaster/etm/server/ServerApplication.java` - входная точка приложения.
+- `src/main/java/jmaster/etm/server/config` - app config.
+- `src/main/java/jmaster/etm/server/security` - security config, roles, principal.
+- `src/main/java/jmaster/etm/server/controller` - login/home/fetch config/snapshot/report controllers.
+- `src/main/java/jmaster/etm/server/model/snapshot` - fetch config, consumption snapshots, register service, last error.
+- `src/main/java/jmaster/etm/server/model/snapshot/http` - local/delegate HTTP execution and request/response data.
+- `src/main/java/jmaster/etm/server/model/report` - consumption report filters, datasets, chart/report services, colors, progress, points.
+- `src/main/java/jmaster/etm/server/model/PhoneOwner.java` - phone ownership model.
+- `src/main/resources/templates` - FreeMarker templates.
+- `src/main/resources/static/css/etm.css` - ETM styles.
+- `src/main/resources/db` - SQL/session schema files; do not change without direct request.
+
+Framework orientation:
+- If behavior/class is from `jmaster.*` framework rather than `jmaster.etm.*`, inspect `jmaster-web/description.txt` and package `description.txt` files.
+- Prefer local ETM changes for product-specific controllers, templates, reports, snapshot fetching, and CSS.
+- Change `jmaster-web` only for generic framework behavior shared by clients.
+
+Safe verification:
+Use `rg`, file reads, `git diff --stat`, and `git diff -- <file>`. Do not build/test/run.

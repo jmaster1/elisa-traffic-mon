@@ -1,0 +1,17 @@
+Прочитай:
+- jmaster-web/docs/codex/workspace-prompt.txt
+- jmaster-web/docs/codex/workspace-map.md
+- elisa-traffic-mon/docs/codex/prompt.txt
+
+Работаем с `elisa-traffic-mon` как client app поверх `jmaster-web`.
+Отвечай по-русски. Не запускай сборку, компиляцию, тесты, dev-server или браузер без прямой просьбы.
+
+Основные зоны:
+- elisa-traffic-mon/src/main/java/jmaster/etm/server
+- elisa-traffic-mon/src/main/resources/templates
+- elisa-traffic-mon/src/main/resources/static
+- elisa-traffic-mon/src/main/resources/db
+
+Framework boundary:
+- сначала ищи локальное решение в `elisa-traffic-mon`
+- иди в `jmaster-web`, только если поведение общее, класс из `jmaster.*`, или локальная правка дублирует framework-логику
