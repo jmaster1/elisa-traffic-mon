@@ -1,6 +1,7 @@
 package jmaster.etm.server.model.snapshot;
 
 import jmaster.core.ui.annot.Ui;
+import jmaster.system.prefs.PrefsType;
 import lombok.Data;
 
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map;
  */
 @Data
 @Ui(label = "Fetch config", icon = "key")
+@PrefsType
 public class FetchConfig {
 
 	public int monthlyQuotaGb = 500;
