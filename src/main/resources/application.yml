@@ -22,15 +22,6 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
-        cache:
-          use_second_level_cache: true
-          use_query_cache: true
-          region:
-            factory_class: org.hibernate.cache.jcache.internal.JCacheRegionFactory
-        javax:
-          cache:
-            uri: ehcache.xml
-            provider: org.ehcache.jsr107.EhcacheCachingProvider
   freemarker:
     settings:
       auto_include: _/layout.ftlh
