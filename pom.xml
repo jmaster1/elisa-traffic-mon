@@ -23,7 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>jmaster</groupId>
-			<artifactId>web</artifactId>
+			<artifactId>web-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
