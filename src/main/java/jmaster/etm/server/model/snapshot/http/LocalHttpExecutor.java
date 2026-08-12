@@ -1,7 +1,5 @@
 package jmaster.etm.server.model.snapshot.http;
 
-import org.apache.commons.io.IOUtils;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
@@ -35,7 +33,7 @@ public class LocalHttpExecutor implements Function<HttpRequestData, HttpResponse
             responseData.status = httpURLConnection.getResponseCode();
             responseData.contentType = httpURLConnection.getContentType();
             responseData.contentEncoding = httpURLConnection.getContentEncoding();
-            byte[] sourceBytes = IOUtils.toByteArray(httpURLConnection.getInputStream());
+            byte[] sourceBytes = httpURLConnection.getInputStream().readAllBytes();
             responseData.contentBase64 = Base64.getEncoder().encodeToString(sourceBytes);
             httpURLConnection.disconnect();
         } catch (Exception ex) {
