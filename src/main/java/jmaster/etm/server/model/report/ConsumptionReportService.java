@@ -21,12 +21,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ConsumptionReportService {
 
-    private static final Integer MAX_DATA_SIZE = 50000;
+    private static final Integer MAX_DATA_SIZE = 10_000;
 
     private final ConsumptionSnapshotRepository repository;
 
     public List<ConsumptionSnapshot> getConsumptionSnapshots(ConsumptionReportFilter filter, ZoneId reportZoneId) {
         filter.setSize(MAX_DATA_SIZE);
+        filter.setSortBy(ConsumptionSnapshot.Fields.timestamp);
+        filter.setSortDesc();
         return filter.list(repository, reportZoneId).stream()
                 .filter(snapshot -> snapshot.getTimestamp() != null)
                 .sorted(Comparator.comparing(ConsumptionSnapshot::getTimestamp))

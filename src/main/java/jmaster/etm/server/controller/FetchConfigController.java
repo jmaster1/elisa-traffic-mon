@@ -31,9 +31,16 @@ public class FetchConfigController extends AbstractController {
 	}
 
 	@PostMapping("/consumption/config")
-	String parseFetch(@RequestParam("data") String data) {
-		FetchConfig fetchConfig = consumptionRegisterService.parseFetchConfig(data);
-		consumptionRegisterService.saveFetchConfig(fetchConfig);
+	String parseFetch(@RequestParam("data") String data, RedirectAttributes redirectAttributes) {
+		try {
+			FetchConfig fetchConfig = consumptionRegisterService.parseFetchConfig(data);
+			consumptionRegisterService.saveFetchConfig(fetchConfig);
+			redirectAttributes.addFlashAttribute(ATTR_INFO_MESSAGE, "Fetch configuration saved.");
+		} catch (Exception ex) {
+			var errorData = errorLogService.handleError(ex);
+			redirectAttributes.addFlashAttribute(ATTR_ERROR_MESSAGE, ex.getMessage());
+			redirectAttributes.addFlashAttribute(ATTR_ERROR_DETAILS, formatErrorDetails(errorData, ex));
+		}
 		return redirect("/consumption/config");
 	}
 

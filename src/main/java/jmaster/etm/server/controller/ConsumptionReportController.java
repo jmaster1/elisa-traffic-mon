@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import software.xdev.chartjs.model.charts.AbstractChart;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 
 @Controller
@@ -32,6 +33,7 @@ public class ConsumptionReportController extends AbstractController {
     @GetMapping({"", "/"})
     String chart(ConsumptionReportFilter filter, Model model) {
         ZoneId zoneId = resolveZoneId();
+        applyDefaultPeriod(filter, zoneId);
         AbstractChart chart = consumptionChartReportService.buildChart(filter, zoneId);
         FetchConfig fetchConfig = prefsService.getPrefs(FetchConfig.class);
 
@@ -48,9 +50,20 @@ public class ConsumptionReportController extends AbstractController {
     @GetMapping("/daily-usage")
     String dailyUsage(ConsumptionReportFilter filter, Model model) {
         ZoneId zoneId = resolveZoneId();
+        applyDefaultPeriod(filter, zoneId);
         AbstractChart chart = dailyUsageChartReportService.buildChart(filter, zoneId);
         model.addAttribute("chartJson", chart.toJson());
         createFilterFormState(filter, model, "reportFilter").setMethod("get");
         return "consumption/dailyUsage";
+    }
+
+    private void applyDefaultPeriod(ConsumptionReportFilter filter, ZoneId zoneId) {
+        if (filter.getTimestampRange().getFrom() != null
+                || filter.getTimestampRange().getTo() != null) {
+            return;
+        }
+        LocalDate today = LocalDate.now(zoneId);
+        filter.getTimestampRange().setFrom(today.minusDays(6).atStartOfDay());
+        filter.getTimestampRange().setTo(today.plusDays(1).atStartOfDay().minusNanos(1));
     }
 }

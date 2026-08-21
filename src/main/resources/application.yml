@@ -5,8 +5,8 @@ spring:
     resources:
       add-mappings: false
   datasource:
-    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
-    url: ${DATABASE_URL:jdbc:p6spy:mariadb://localhost:3306/etm}
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${DATABASE_URL:jdbc:mariadb://localhost:3306/etm}
     username: ${DATABASE_USERNAME:etm}
     password: ${DATABASE_PASSWORD:etm}
   sql:

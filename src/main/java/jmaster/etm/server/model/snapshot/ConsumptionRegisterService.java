@@ -86,9 +86,8 @@ public class ConsumptionRegisterService {
                 headers.put(key, val);
             }
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Bad fetch data");
+            throw new IllegalArgumentException("Bad fetch data", ex);
         }
-        prefsService.savePrefs(fetchConfig);
         return fetchConfig;
     }
 
