@@ -4,6 +4,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
 import java.util.Iterator;
+import java.io.InputStream;
 import java.util.function.Function;
 
 /**
@@ -27,13 +28,15 @@ public class LocalHttpExecutor implements Function<HttpRequestData, HttpResponse
 
             httpURLConnection.setUseCaches(false);
             httpURLConnection.setDoInput(true);
-            httpURLConnection.setDoOutput(true);
 
             responseData = new HttpResponseData();
             responseData.status = httpURLConnection.getResponseCode();
             responseData.contentType = httpURLConnection.getContentType();
             responseData.contentEncoding = httpURLConnection.getContentEncoding();
-            byte[] sourceBytes = httpURLConnection.getInputStream().readAllBytes();
+            InputStream inputStream = responseData.status >= 400
+                    ? httpURLConnection.getErrorStream()
+                    : httpURLConnection.getInputStream();
+            byte[] sourceBytes = inputStream == null ? new byte[0] : inputStream.readAllBytes();
             responseData.contentBase64 = Base64.getEncoder().encodeToString(sourceBytes);
             httpURLConnection.disconnect();
         } catch (Exception ex) {

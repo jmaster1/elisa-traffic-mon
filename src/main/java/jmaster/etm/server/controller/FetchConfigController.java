@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
 public class FetchConfigController extends AbstractController {
@@ -24,7 +27,7 @@ public class FetchConfigController extends AbstractController {
 	@GetMapping("/consumption/config")
 	String fetchConfig(Model model) {
 		FetchConfig fetchConfig = prefsService.getPrefs(FetchConfig.class);
-		model.addAttribute("fetchConfig", toJson(fetchConfig));
+		model.addAttribute("fetchConfig", toJson(maskSensitiveHeaders(fetchConfig)));
 		LastError lastError = consumptionRegisterService.getLastError();
 		model.addAttribute("lastError", lastError);
 		return "consumption/fetchConfig";
@@ -35,6 +38,10 @@ public class FetchConfigController extends AbstractController {
 		try {
 			FetchConfig fetchConfig = consumptionRegisterService.parseFetchConfig(data);
 			consumptionRegisterService.saveFetchConfig(fetchConfig);
+			redirectAttributes.addFlashAttribute("parsedProvider", consumptionRegisterService.getProviderName(fetchConfig));
+			redirectAttributes.addFlashAttribute("parsedFetchUrl", fetchConfig.uri);
+			redirectAttributes.addFlashAttribute("parsedHeaderCount",
+					fetchConfig.headers == null ? 0 : fetchConfig.headers.size());
 			redirectAttributes.addFlashAttribute(ATTR_INFO_MESSAGE, "Fetch configuration saved.");
 		} catch (Exception ex) {
 			var errorData = errorLogService.handleError(ex);
@@ -42,6 +49,26 @@ public class FetchConfigController extends AbstractController {
 			redirectAttributes.addFlashAttribute(ATTR_ERROR_DETAILS, formatErrorDetails(errorData, ex));
 		}
 		return redirect("/consumption/config");
+	}
+
+	private FetchConfig maskSensitiveHeaders(FetchConfig source) {
+		if (source == null) {
+			return null;
+		}
+		FetchConfig result = new FetchConfig();
+		result.monthlyQuotaGb = source.monthlyQuotaGb;
+		result.enabled = source.enabled;
+		result.uri = source.uri;
+		if (source.headers != null) {
+			result.headers = new LinkedHashMap<>();
+			for (Map.Entry<String, String> entry : source.headers.entrySet()) {
+				String key = entry.getKey();
+				boolean isSensitive = "cookie".equalsIgnoreCase(key)
+						|| "authorization".equalsIgnoreCase(key);
+				result.headers.put(key, isSensitive ? "***" : entry.getValue());
+			}
+		}
+		return result;
 	}
 
 	@PostMapping("/consumption/config/test")

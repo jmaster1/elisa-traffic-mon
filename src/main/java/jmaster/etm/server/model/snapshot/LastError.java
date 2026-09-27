@@ -7,4 +7,12 @@ public class LastError {
 	public String message;
 	
 	public Date date;
+
+	public String getMessage() {
+		return message;
+	}
+
+	public Date getDate() {
+		return date;
+	}
 }

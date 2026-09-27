@@ -1,10 +1,20 @@
 <@layout>
     <section class="mx-auto" style="max-width: 960px;">
-        <div class="mb-3">
-            <p class="text-secondary mb-2">
-                Parse request text acquired by "Copy as fetch (Node.js)" from Chrome DevTools.
-            </p>
-            <pre class="bg-body-tertiary border rounded p-3 small overflow-auto"><code>fetch("https://www.elisa.ee/rest/customer/gsm/getMobileInternetUsageData/53065326", {
+        <div class="accordion mb-3" id="fetchConfigHints">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="elisaFetchHintHeading">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#elisaFetchHint" aria-expanded="true" aria-controls="elisaFetchHint">
+                        Elisa
+                    </button>
+                </h2>
+                <div id="elisaFetchHint" class="accordion-collapse collapse show"
+                     aria-labelledby="elisaFetchHintHeading" data-bs-parent="#fetchConfigHints">
+                    <div class="accordion-body">
+                        <p class="text-secondary mb-2">
+                            In Chrome DevTools copy the consumption request as "Copy as fetch (Node.js)".
+                        </p>
+                        <pre class="bg-body-tertiary border rounded p-3 small overflow-auto mb-0"><code>fetch("https://www.elisa.ee/rest/customer/gsm/getMobileInternetUsageData/53065326", {
   "headers": {
     "accept": "application/json, text/plain, *",
     "accept-language": "ru-RU,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,en;q=0.6",
@@ -24,6 +34,37 @@
   "body": null,
   "method": "GET"
 });</code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="teliaFetchHintHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#teliaFetchHint" aria-expanded="false" aria-controls="teliaFetchHint">
+                        Telia
+                    </button>
+                </h2>
+                <div id="teliaFetchHint" class="accordion-collapse collapse"
+                     aria-labelledby="teliaFetchHintHeading" data-bs-parent="#fetchConfigHints">
+                    <div class="accordion-body">
+                        <p class="mb-2">
+                            Open <a href="https://iseteenindus.telia.ee/ru/teenused/mobiil" target="_blank" rel="noopener">Mobile services</a>,
+                            find the <code>customer_mobile_product_list/items</code> request in Chrome DevTools and copy it as
+                            "Copy as fetch (Node.js)". Do not use a consumption request from an individual number page.
+                        </p>
+                        <p class="text-secondary mb-2">
+                            The provider follows all list pages, finds the configured phone numbers and then reads their domestic mobile-data usage.
+                        </p>
+                        <pre class="bg-body-tertiary border rounded p-3 small overflow-auto mb-0"><code>fetch("https://iseteenindus.telia.ee/myse-frontend/api/v1/products/lists/customer_mobile_product_list/items?page=1&amp;pageId=&lt;pageId&gt;", {
+  "headers": {
+    "accept": "application/json",
+    "cookie": "..."
+  },
+  "method": "GET"
+});</code></pre>
+                    </div>
+                </div>
+            </div>
         </div>
         <form id="parseFetchConfigForm" method="post" class="d-grid gap-3">
             <textarea
@@ -39,6 +80,19 @@
                 <button class="btn btn-outline-primary" type="submit">test</button>
             </form>
         </div>
+        <#if parsedProvider??>
+            <div class="alert alert-success mt-3 mb-0" role="status">
+                <div class="fw-semibold">Fetch parsed successfully</div>
+                <dl class="row mb-0 mt-2">
+                    <dt class="col-sm-2">Provider</dt>
+                    <dd class="col-sm-10">${parsedProvider}</dd>
+                    <dt class="col-sm-2">Request URL</dt>
+                    <dd class="col-sm-10 text-break mb-1">${parsedFetchUrl}</dd>
+                    <dt class="col-sm-2">Headers</dt>
+                    <dd class="col-sm-10 mb-0">${parsedHeaderCount}</dd>
+                </dl>
+            </div>
+        </#if>
         <#if lastError??>
             <div class="alert alert-danger mt-3" role="alert">
                 <div class="fw-semibold">Last consumption query error</div>
@@ -48,7 +102,10 @@
                 <div>${lastError.message!"Unknown error"}</div>
             </div>
         </#if>
-        <pre id="fetchConfig" class=""></pre>
+        <section class="mt-3">
+            <h2 class="h5">Saved fetch configuration</h2>
+            <pre id="fetchConfig" class="mb-0"></pre>
+        </section>
         <script>
             const config = ${fetchConfig?no_esc};
             $('#fetchConfig').text(JSON.stringify(config, null, 2));
