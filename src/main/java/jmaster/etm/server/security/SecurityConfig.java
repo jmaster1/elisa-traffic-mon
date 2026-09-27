@@ -1,27 +1,16 @@
 package jmaster.etm.server.security;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jmaster.core.controller.AbstractController;
 import jmaster.core.security.LoginRedirectEntryPoint;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.header.writers.CrossOriginOpenerPolicyHeaderWriter;
 
 @Configuration
 public class SecurityConfig {
-    private static final DefaultRedirectStrategy REDIRECT_STRATEGY = new DefaultRedirectStrategy();
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -31,6 +20,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 "/login",
+                                "/logout",
+                                "/firebase-login",
                                 "/favicon.ico",
                                 "/static/**",
                                 "/css/**",
@@ -40,67 +31,17 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().hasRole(EtmUserRole.admin.name()))
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.crossOriginOpenerPolicy(coop -> coop.policy(
+                        CrossOriginOpenerPolicyHeaderWriter.CrossOriginOpenerPolicy
+                                .SAME_ORIGIN_ALLOW_POPUPS)))
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new LoginRedirectEntryPoint("/login", "/admin", "/consumption")))
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .successHandler((request, response, authentication) ->
-                                REDIRECT_STRATEGY.sendRedirect(
-                                        request,
-                                        response,
-                                        LoginRedirectEntryPoint.consumeLoginRedirectUrl(
-                                                request.getSession(false),
-                                                "/consumption/report")))
-                        .failureHandler((request, response, exception) ->
-                                redirectWithFlash(
-                                        request,
-                                        response,
-                                        "/login",
-                                        AbstractController.ATTR_ERROR_MESSAGE,
-                                        "Invalid username or password."))
-                        .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessHandler((request, response, authentication) ->
-                                redirectWithFlash(
-                                        request,
-                                        response,
-                        "/login",
-                        AbstractController.ATTR_INFO_MESSAGE,
-                        "You have signed out."))
+                        .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true)
                         .deleteCookies("SESSION", "JSESSIONID"))
                 .build();
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    UserDetailsService userDetailsService(
-            PasswordEncoder passwordEncoder,
-            @Value("${etm.security.username:etm}") String username,
-            @Value("${etm.security.password:etm}") String password
-    ) {
-        return new InMemoryUserDetailsManager(
-                User.withUsername(username)
-                        .password(passwordEncoder.encode(password))
-                        .authorities(EtmUserRole.admin)
-                        .build()
-        );
-    }
-
-    private static void redirectWithFlash(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            String url,
-            String attribute,
-            String message
-    ) throws java.io.IOException {
-        request.getSession(true).setAttribute(attribute, message);
-        REDIRECT_STRATEGY.sendRedirect(request, response, url);
     }
 }
