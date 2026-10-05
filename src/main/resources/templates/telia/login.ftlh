@@ -32,6 +32,41 @@
             const stateElement = document.getElementById('sessionState');
             const logElement = document.getElementById('sessionLog');
             let refreshInProgress = false;
+            let renderedLogText = '';
+            let deferredLogText = null;
+
+            function selectionIsInLog() {
+                const selection = window.getSelection();
+                return selection && !selection.isCollapsed &&
+                    (logElement.contains(selection.anchorNode) || logElement.contains(selection.focusNode));
+            }
+
+            function renderLogText(nextText) {
+                if (nextText === renderedLogText) return;
+
+                if (nextText.startsWith(renderedLogText)) {
+                    const wasAtBottom = logElement.scrollHeight - logElement.scrollTop - logElement.clientHeight < 24;
+                    logElement.append(document.createTextNode(nextText.slice(renderedLogText.length)));
+                    renderedLogText = nextText;
+                    deferredLogText = null;
+                    if (wasAtBottom && !selectionIsInLog()) logElement.scrollTop = logElement.scrollHeight;
+                    return;
+                }
+
+                if (selectionIsInLog()) {
+                    deferredLogText = nextText;
+                    return;
+                }
+
+                logElement.textContent = nextText;
+                renderedLogText = nextText;
+                deferredLogText = null;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+
+            document.addEventListener('selectionchange', () => {
+                if (deferredLogText !== null && !selectionIsInLog()) renderLogText(deferredLogText);
+            });
 
             async function refreshStatus() {
                 if (refreshInProgress) return;
@@ -40,8 +75,7 @@
                     const response = await fetch('/telia/login/status', {headers: {'Accept': 'application/json'}});
                     if (!response.ok) throw new Error('Status request failed: ' + response.status);
                     const status = await response.json();
-                    logElement.textContent = status.logs.join('\n');
-                    logElement.scrollTop = logElement.scrollHeight;
+                    renderLogText(status.logs.join('\n'));
                     codeElement.textContent = status.confirmationCode || '—';
                     startButton.disabled = status.running;
                     stateElement.textContent = status.running

@@ -681,24 +681,39 @@ public class TeliaPlaywrightSessionService {
 
     private void launchPersistentFirefox() {
         Path profileDirectory = Path.of(System.getProperty("user.home"), ".etm", "telia-firefox-profile");
+        boolean headless = isLinuxWithoutDisplay();
         try {
             Files.createDirectories(profileDirectory);
         } catch (Exception ex) {
             throw new IllegalStateException("Unable to create the persistent Telia browser profile directory", ex);
         }
 
+        addSessionLog(headless
+                ? "Starting Firefox headless because this server has no graphical display."
+                : "Starting Firefox with a visible window.");
         Playwright newPlaywright = Playwright.create();
         try {
             BrowserContext newContext = newPlaywright.firefox().launchPersistentContext(
                     profileDirectory,
-                    new BrowserType.LaunchPersistentContextOptions().setHeadless(false));
+                    new BrowserType.LaunchPersistentContextOptions().setHeadless(headless));
             playwright = newPlaywright;
             browserContext = newContext;
         } catch (RuntimeException ex) {
             newPlaywright.close();
             throw new IllegalStateException(
-                    "Unable to start Playwright Firefox. Install its browser with the Playwright CLI first.", ex);
+                    "Unable to start Playwright Firefox. Verify the installed browser binaries, OS dependencies, and display configuration.", ex);
         }
+    }
+
+    private boolean isLinuxWithoutDisplay() {
+        if (!System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("linux")) {
+            return false;
+        }
+        return isBlank(System.getenv("DISPLAY")) && isBlank(System.getenv("WAYLAND_DISPLAY"));
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
     @PreDestroy
