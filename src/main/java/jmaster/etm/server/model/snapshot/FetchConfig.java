@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.Map;
 
 /**
- * represents data parsed from "copy as fetch Node.js" from chrome devtools
+ * Request settings used by consumption providers to retrieve snapshots.
  */
 @Data
 @Ui(label = "Fetch config", icon = "key")

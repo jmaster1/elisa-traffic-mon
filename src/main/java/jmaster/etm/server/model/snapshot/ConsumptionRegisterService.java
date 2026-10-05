@@ -7,6 +7,7 @@ import jmaster.system.prefs.PrefsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,9 @@ public class ConsumptionRegisterService {
     @Autowired
     List<ConsumptionProvider> consumptionProviders;
 
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
+
     private Exception lastError;
 
     private Date lastErrorDate;
@@ -54,16 +58,7 @@ public class ConsumptionRegisterService {
         try {
             FetchConfig fetchConfig = prefsService.getPrefs(FetchConfig.class);
             if (fetchConfig != null && fetchConfig.uri != null && fetchConfig.enabled) {
-                ConsumptionProvider provider = getProvider(fetchConfig.uri);
-                Map<PhoneOwner, BigDecimal> usedGbByOwner = provider.queryUsedGbByOwner(fetchConfig);
-                Instant timestamp = Instant.now();
-                for (Map.Entry<PhoneOwner, BigDecimal> entry : usedGbByOwner.entrySet()) {
-                    ConsumptionSnapshot snapshot = new ConsumptionSnapshot();
-                    snapshot.setTimestamp(timestamp);
-                    snapshot.setPhoneNr(entry.getKey().phoneNr);
-                    snapshot.setUsedGb(entry.getValue().floatValue());
-                    repository.save(snapshot);
-                }
+                queryAndSaveSnapshots(fetchConfig);
             }
         } catch (Exception ex) {
             logger.error("queryConsumptionSnapshots() failed", ex);
@@ -71,6 +66,55 @@ public class ConsumptionRegisterService {
             lastError = ex;
             lastErrorDate = new Date();
         }
+    }
+
+    public Map<PhoneOwner, BigDecimal> queryAndSaveCurrentSnapshots() {
+        FetchConfig fetchConfig = prefsService.getPrefs(FetchConfig.class);
+        if (fetchConfig == null || fetchConfig.uri == null || fetchConfig.uri.isBlank()) {
+            throw new IllegalStateException("Consumption fetch configuration is missing");
+        }
+        Map<PhoneOwner, BigDecimal> result = queryAndSaveSnapshots(fetchConfig);
+        clearLastError();
+        return result;
+    }
+
+    private Map<PhoneOwner, BigDecimal> queryAndSaveSnapshots(FetchConfig fetchConfig) {
+        ConsumptionProvider provider = getProvider(fetchConfig.uri);
+        Map<PhoneOwner, BigDecimal> usedGbByOwner;
+        try {
+            usedGbByOwner = provider.queryUsedGbByOwner(fetchConfig);
+        } catch (RuntimeException ex) {
+            if (isTeliaConfig(fetchConfig) && isStatus440(ex)) {
+                logger.warn("Telia provider received HTTP 440; requesting an automatic browser login flow");
+                eventPublisher.publishEvent(new TeliaSessionRefreshRequestedEvent(
+                        "Telia provider received Bad status: 440."));
+            }
+            throw ex;
+        }
+        Instant timestamp = Instant.now();
+        for (Map.Entry<PhoneOwner, BigDecimal> entry : usedGbByOwner.entrySet()) {
+            ConsumptionSnapshot snapshot = new ConsumptionSnapshot();
+            snapshot.setTimestamp(timestamp);
+            snapshot.setPhoneNr(entry.getKey().phoneNr);
+            snapshot.setUsedGb(entry.getValue().floatValue());
+            repository.save(snapshot);
+        }
+        return usedGbByOwner;
+    }
+
+    private boolean isTeliaConfig(FetchConfig fetchConfig) {
+        return fetchConfig.uri != null && fetchConfig.uri.contains("iseteenindus.telia.ee");
+    }
+
+    private boolean isStatus440(Throwable exception) {
+        Throwable current = exception;
+        while (current != null) {
+            if (current.getMessage() != null && current.getMessage().contains("Bad status: 440")) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 
     private ConsumptionProvider getProvider(String source) {

@@ -48,20 +48,13 @@
                      aria-labelledby="teliaFetchHintHeading" data-bs-parent="#fetchConfigHints">
                     <div class="accordion-body">
                         <p class="mb-2">
-                            Open <a href="https://iseteenindus.telia.ee/ru/teenused/mobiil" target="_blank" rel="noopener">Mobile services</a>,
-                            find the <code>customer_mobile_product_list/items</code> request in Chrome DevTools and copy it as
-                            "Copy as fetch (Node.js)". Do not use a consumption request from an individual number page.
+                            Open <a href="/telia/login">Telia login</a> and start a session. After authentication,
+                            ETM captures and saves the authenticated <code>customer_mobile_product_list/items</code>
+                            request automatically. It does not use a consumption request from an individual number page.
                         </p>
                         <p class="text-secondary mb-2">
                             The provider follows all list pages, finds the configured phone numbers and then reads their domestic mobile-data usage.
                         </p>
-                        <pre class="bg-body-tertiary border rounded p-3 small overflow-auto mb-0"><code>fetch("https://iseteenindus.telia.ee/myse-frontend/api/v1/products/lists/customer_mobile_product_list/items?page=1&amp;pageId=&lt;pageId&gt;", {
-  "headers": {
-    "accept": "application/json",
-    "cookie": "..."
-  },
-  "method": "GET"
-});</code></pre>
                     </div>
                 </div>
             </div>

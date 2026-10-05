@@ -18,6 +18,7 @@
 	<properties>
 		<java.version>21</java.version>
 		<lombok.version>1.18.46</lombok.version>
+		<playwright.version>1.63.0</playwright.version>
 	</properties>
 
 	<dependencies>
@@ -36,6 +37,11 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.microsoft.playwright</groupId>
+			<artifactId>playwright</artifactId>
+			<version>${playwright.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

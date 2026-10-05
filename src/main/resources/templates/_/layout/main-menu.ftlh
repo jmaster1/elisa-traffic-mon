@@ -31,6 +31,10 @@
                     <a class="nav-link" href="/consumption/config">
                         <@icon name="sliders"/>Config</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/telia/login">
+                        <@icon name="key"/>Telia login</a>
+                </li>
                 <@adminMenu/>
             </#if>
         </ul>

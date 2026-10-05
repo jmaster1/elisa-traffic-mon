@@ -23,7 +23,7 @@ public class FetchConfigController extends AbstractController {
 	private final ConsumptionRegisterService consumptionRegisterService;
 
 	private final PrefsService prefsService;
-	
+
 	@GetMapping("/consumption/config")
 	String fetchConfig(Model model) {
 		FetchConfig fetchConfig = prefsService.getPrefs(FetchConfig.class);
@@ -83,4 +83,5 @@ public class FetchConfigController extends AbstractController {
 		}
 		return redirect("/consumption/config");
 	}
+
 }
